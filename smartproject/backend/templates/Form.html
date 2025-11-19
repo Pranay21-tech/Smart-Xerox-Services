@@ -1,0 +1,88 @@
+{% load static %} 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <link rel="stylesheet" href="{% static 'css/Form.css' %}">
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" 
+integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Smart Xerox Services-SignUp page</title>
+</head>
+<body>
+    <header>
+       <div class="navbar">
+        <div class="nav_logo ">
+              <div class="logo">
+                 <img src="static/logo.png" alt="logo">
+             </div>
+             </div>
+        <div class="nav-Home border">
+       <i class="fa-solid fa-house"><a href="{% url 'index' %}" rel="Home">Home</a></i>
+        </div>
+        <div class="nav-features border">
+          <i class="fa-solid fa-file"><a href="{% url 'about' %}" rel="About Us">About Us</a></i>
+        </div>
+        <br>
+        <div class="nav-about border">
+          <i class="fa-solid fa-address-card"><a href="{% url 'services' %}" rel="Our-Services">Our Services</a></i>
+        </div>
+        <br>
+        <div class="nav-contact border">
+          <i class="fa-solid fa-phone"><a href="{% url 'contact' %}" rel="content">Contact</a></i>
+        </div>
+        <br>
+        <div class="nav-Login border">
+          <i class="fa-solid fa-user"><a href="{% url 'index' %}" rel="Login">Login</a></i>
+       </div>
+       <br>
+       <div class="nav-SignUp border">
+        <a href="{% url 'form' %}" rel="SignUp"><button class="button">SignUp</button></a></i>
+       </div>
+       <br>
+       </div>
+      </header>
+      <hr>
+      <hr>
+      <br><br>
+    <form id="signupForm" method="post">
+  {% csrf_token %}
+  <div class="form">
+    <h2>Sign Up Here</h2>
+      <!-- <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}"> -->
+
+    <input type="text" id="firstName"  name= "firstName" placeholder="First Name" required>
+    <input type="text" id="lastName" name="lastName" placeholder="Last Name" required>
+    <input type="email" id="signEmail" name="email" placeholder="Enter Email..." required>
+    <input type="password" id="signPassword" name="password" placeholder="Password" required>
+    <input type="password" id="signConfirmPassword"  name="Confirm Password"   placeholder="Confirm Password" required>
+
+    <button type="submit" class="button1">Sign Up</button>
+
+    <br><br>
+    <p class="link">
+      Already have an account?
+      <a href="{% url 'index' %}">Login</a>
+    </p>
+
+    <p class="liw">Or Signup With</p>
+
+    <div class="social-icons">
+      <a href="#"><i class="fa-brands fa-google"></i></a>
+      <a href="#"><i class="fa-brands fa-facebook"></i></a>
+      <a href="#"><i class="fa-brands fa-instagram"></i></a>
+      <a href="#"><i class="fa-brands fa-twitter"></i></a>
+    </div>
+  </div>
+</form>
+
+<script src="{% static 'js/script.js' %}"></script>
+
+  
+</body>
+</html>

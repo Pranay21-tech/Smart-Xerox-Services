@@ -1,0 +1,238 @@
+* {
+ margin: 0%;
+  border: border-box;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 1rem;
+  scrollbar-width: none;
+ }
+.navbar {
+  background-color: #f5f5f5;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  color: rgb(18, 17, 17);
+  font-family: 'Segoe UI', sans-serif;
+  overflow: hidden;
+} 
+.nav-logo {
+  width: 100px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.logo img {
+  /* background-image: url("{% static 'logo.png' %}"); */
+  max-height: 70px !important;
+  width: auto !important;
+  object-fit: contain;
+  display: block;
+}
+.border {
+    border: 2px solid transparent;
+}
+
+.border:hover {
+    border: 2px solid rgb(64, 26, 26);
+}
+.nav-Home {
+ margin-left: 10px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.nav-Aboutus {
+  margin-left:10px;
+  font-size: 1rem;
+ font-family: Arial, Helvetica, sans-serif;
+}
+.nav-Ourservices {
+  margin-left:10px;
+  font-size: 1rem;
+   font-family: Arial, Helvetica, sans-serif;
+}
+.nav-contact {
+  margin-left:10px;
+  font-size: 1rem;
+  font-family: Arial, Helvetica, sans-serif;  
+}
+.nav-Login {
+    margin-left:10px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1rem;
+  border-radius: 4px;
+  justify-content: center;
+}
+.nav-SignUp {
+  box-sizing: border-box;
+    margin-left:10px;
+    font-size: 1rem;
+  font-family: Arial, Helvetica, sans-serif;  
+  border-radius: 8px;
+  color:white
+}
+.button {
+  background-color:red;
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+.navbar a {
+  text-decoration: none;
+  color: rgb(240, 238, 238);
+  color: inherit;
+  
+}
+.SignUp-form {
+  display: flex;
+  justify-content: center;
+  margin-top: 45px; 
+}
+.form {
+  background-color: #93ecec;
+  padding: 40px 30px;
+  border-radius: 15px;
+  width: 420px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+.form h2 {
+  background-color: white;
+  color: red;
+  padding: 10px 20px;
+  border-radius: 10px;
+  margin-bottom: 25px;
+  font-size: 24px;
+}
+.form input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: none;
+  border-bottom: 2px solid #333;
+  background-color: transparent;
+  font-size: 15px;
+  outline: none;
+}
+.form input:focus {
+  border-color: rgb(73, 190, 240);
+}
+.form button {
+  width: 100%;
+  padding: 12px;
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.form button:hover {
+  background-color: rgb(73, 190, 240);
+}
+.login{
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.login a {
+  color: #0077cc;
+  text-decoration: none;
+}
+
+.login-text a:hover {
+  text-decoration: underline;
+}
+.social-login {
+  margin-top: 25px;
+}
+
+.social-login p {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 10px;
+}
+.social-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.social-buttons button{
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+.google {
+  background-color: #db4437;
+}
+.facebook {
+  background-color: #3b5998;
+}
+.twitter {
+  background-color: #1da1f2;
+}
+.social-buttons button:hover {
+  opacity: 0.85;
+}
+/* response  part*/
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    height: auto;
+    padding: 10px;
+  }
+
+  .nav-logo, .logo {
+    width: 80px;
+    height: 80px;
+  }
+
+  .nav-Home,
+  .nav-features,
+  .nav-about,
+  .nav-contact,
+  .nav-Login,
+  .nav-SignUp {
+    margin: 5px 0;
+    font-size: 0.9rem;
+  }
+
+  .form {
+    width: 90%;
+    padding: 20px;
+  }
+
+  .form h2 {
+    font-size: 20px;
+  }
+
+  .form input,
+  .form button {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .social-buttons {
+    flex-direction: column;
+  }
+
+  .social-buttons button {
+    width: 100%;
+  }
+}

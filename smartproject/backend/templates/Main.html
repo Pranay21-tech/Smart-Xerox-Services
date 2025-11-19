@@ -1,0 +1,187 @@
+{% load static %} 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Main-Smart Xerox Services</title>
+  <link rel="stylesheet" href="{% static 'css/Main.css' %}"/>
+  <link rel="manifest" href="{% static 'manifest.json' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" 
+    integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" 
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+  <header>
+       <div class="navbar">
+        <div class="nav_logo ">
+              <div class="logo">
+                 <img src="static/logo.png" alt="logo">
+             </div>
+             </div>
+        <div class="nav-Home border">
+       <i class="fa-solid fa-house"><a href="{% url 'index' %}" rel="Home">Home</a></i>
+        </div>
+        <div class="nav-AboutUs border">
+          <i class="fa-solid fa-file"><a href="{% url 'about' %}" rel="About US">About Us</a></i>
+        </div>
+        <div class="nav-Ourservices border">
+          <i class="fa-solid fa-address-card"><a href="{%  url 'services' %}" rel="Our Services">Our Services</a></i>
+        </div>
+        <div class="nav-contact border">
+          <i class="fa-solid fa-phone"><a href="{% url 'contact' %}" rel="content">Contact</a></i>
+        </div>
+       <div class="nav-LogOut border">
+        <a href="{% url 'index' %}" rel="LogOut"><button class="button">LogOut</button></a></i>
+       </div>
+       </div>
+      </header>
+  <hr>
+  <hr>
+  <div class="welcome-dashboard">
+  <h2>Welcome to Smart Xerox Services 👋</h2>
+  <p>Your one-stop solution for online document uploads, formatting, and printing.</p>
+  <div class="dashboard-note">
+    <strong>* Tip:</strong> Upload your file in PDF format to keep your formatting safe!
+  </div>
+</div>
+
+  <div class="main-pannel">
+    <div class="main-container">
+      <h2>Upload Your Document</h2>
+      <br>
+      <form>
+        <div class="form-group">
+          <label for="docType" required>Document Type:</label><br>
+          <select id="docType" required>
+            <option value="">Select type</option>
+            <option value="pdf">PDF</option>
+            <option value="docx">DOCX</option>
+             <option value="PPt">PPt</option>
+            <option value="image">Image</option>
+            <option value="drive-link">drive-link</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+  <label for="file-upload">Select Document:</label><br>
+
+  <div class="upload-row">
+    <label class="upload-btn" for="file-upload">Select document files</label>
+    <input type="file" id="file-upload" style="display: none;" />
+
+    <div class="side-icons">
+      <button type="button" class="icon" onclick="alert('Upload your file to Google Drive and paste the link below.')">
+        <i class="fab fa-google-drive"></i>
+      </button>
+      <button type="button" class="icon">
+        <i class="fab fa-dropbox"></i>
+      </button>
+    </div>
+  </div>
+
+  <label for="drive-link" style="margin-top: 15px;"><b>Paste Google Drive Link:</b></label><br>
+  <input type="url" id="drive-link" name="drive-link" placeholder="https://drive.google.com/..." required>
+
+  <p class="drag-text">Or drop Documents here...</p>
+</div>
+        <div class="form-group">
+          <label for="printType">Print Type:</label><br>
+          <select id="printType" required>
+            <option value="">Select Type</option>
+            <option value="Colorprint">Color-Print</option>
+            <option value="Black&White">Black&White</option>
+          </select>
+        </div>
+             
+        <div class="form-group">
+          <label for="Orientation-Page">Orientation of a page:</label><br>
+          <select id="printType" required>
+            <option value="">Select Type</option>
+            <option value="Colorprint">portrait-(vertical)</option>
+            <option value="Black&White">landscape-(horizontal)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="No.ofcopies">Number of copies:</label><br>
+           <input type="number" id="page-count" name="page-count" placeholder="Enter a number of copies for your document ">
+        </div>
+
+        <div class="form-group">
+          <label for="duplexType">Simplex/Duplex Printing:</label><br>
+          <select id="duplexType" required>
+            <option value="">Select Type</option>
+            <option value="Simplex">Simplex (One-side)</option>
+            <option value="Duplex">Duplex (Two-sides)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="paperSize">Paper Size:</label>
+          <br>
+          <select id="paperSize" required>
+            <option value="">Select Type</option>
+            <option value="A4">A4 Sheet</option>
+            <option value="A3">A3 Sheet</option>
+            <option value="Letter">Letter</option>
+            <option value="Legal">Legal</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="collegeDoc">Pre-College Document:</label>
+          <br>
+          <select id="collegeDoc" required>
+            <option value="">Select Type</option>
+            <option value="leave">Leave Letter</option>
+            <option value="undertaking">Undertaking Form</option>
+            <option value="watermark">College-Watermark Page</option>
+            <option value="none">None</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="page-count">Number of Pages:</label>
+          <br>
+          <input type="number" id="page-count" name="page-count" min="1" max="25" placeholder="Enter number of pages">
+        </div>
+
+        <div class="form-group">
+          <label for="stationery items">stationery items:</label>
+          <br>
+          <input type="stationery items" id="stationery-items" name="stationery items" placeholder="Type required Stationery items--">
+        </div>
+      </form>
+      <br>
+      <div class="button3">
+          <button type="button" class="submit-btn" onclick="showReview()">Review & Confirm</button>
+        </div>
+        <div id="reviewBox" class="review-box" style="display: none;">
+  <h3>Review Your Submission</h3>
+  <ul id="reviewContent"></ul>
+  <button class="submit-btn" onclick="proceedToPayment()">Proceed to Payment</button>
+</div>
+     <div class="instructions-box">
+  <h4>How to Use Smart Xerox Services</h4>
+  <ul>
+    <li>Select the documents you want to upload.</li>
+    <li>Review your files and confirm.</li>
+    <li>Make payment and submit your order.</li>
+  </ul>
+</div>
+
+<div class="note-box">
+  <strong>Note:</strong>
+  <p>* Upload the document in <b>PDF format</b> to avoid losing formatting or data.</p>
+  <p>* Make sure your file is under 10MB for faster processing.</p>
+  <p>* Double-check the content before payment confirmation.</p>
+  <p>* If using Drive/Dropbox, allow access permission after selecting.</p>
+</div>
+
+  </div>
+  </div>
+  <script src="{% static 'script.js' %}"></script>
+</body>
+</html>

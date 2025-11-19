@@ -1,0 +1,156 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <meta
+      name="description"
+      content="Web site created using create-react-app"/>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" 
+integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Smart Xerox Services</title>
+  </head>
+  <body>
+    <header>
+       <div class="navbar">
+        <div class="nav_logo ">
+              <div class="logo">
+                 <img src="static/logo.png" alt="logo">
+             </div>
+             </div>
+        <div class="nav-Home border">
+       <i class="fa-solid fa-house"><a href="{% url 'index' %}" rel="Home">Home</a></i>
+        </div>
+        <div class="nav-AboutUs border">
+          <i class="fa-solid fa-file"><a href="{% url 'about' %}" rel="About US">About Us</a></i>
+        </div>
+        <div class="nav-Ourservices border">
+          <i class="fa-solid fa-address-card"><a href="{%  url 'services' %}" rel="Our Services">Our Services</a></i>
+        </div>
+        <div class="nav-contact border">
+          <i class="fa-solid fa-phone"><a href="{% url 'contact' %}" rel="content">Contact</a></i>
+        </div>
+        <div class="nav-Login border">
+          <i class="fa-solid fa-user"><a href="{% url 'index' %}" rel="Login">Login</a></i>
+       </div>
+       <div class="nav-SignUp border">
+        <a href="{% url 'form' %}" rel="SignUp"><button class="button">SignUp</button></a></i>
+       </div>
+       </div>
+      </header>
+<hr>
+<hr>
+<br>
+<br>
+<div class="main-title">
+  <div class="main">
+    <center><h1>Smart Xerox Services</h1></center>
+</div>
+<br>
+<div class="main1">
+<h2>"Smart Xerox Services offers fast, reliable, and high-quality document printing, 
+  scanning, and copying — all with a modern touch to meet your everyday business needs."</h2>
+</div>
+<br>
+<div class="marquee">
+  <span>##OUR MISSION IS TO COMBINE TECHNOLOGY WITH CONVENIENCE,MAKING IT EASIER FOR STUDENTS AND
+   PROFESSIONALS,TO ACCESS RELIABLE DOCUMENT SERVICES — ANYTIME,ANYWHERE.....</span>
+</div>
+<br>
+<div class="image">
+  <img src="{% static 'logo2.png' %}" alt="image">
+</div>
+<br>
+<br>
+<form id="loginForm" method="post">
+  {% csrf_token %}
+  <div class="form">
+    <h2>Login Here</h2>
+<!-- <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}"> -->
+
+    <input type="email" id="loginEmail"  name="email" placeholder="Enter Email..." required>
+    <input type="password" id="loginPassword"  name="password"  placeholder="Enter Password..." required>
+
+    <a href="#">Forgot Password?</a>
+    <button type="submit" class="button1">Login</button>
+
+    <p class="link">
+      Don't have an account?
+      <a href="{% url 'form' %}">Sign Up</a>
+    </p>
+    
+    <p class="liw">Login with</p>
+    <div class="social-icons">
+      <a href="#"><i class="fa-brands fa-google"></i></a>
+      <a href="#"><i class="fa-brands fa-facebook"></i></a>
+      <a href="#"><i class="fa-brands fa-instagram"></i></a>
+      <a href="#"><i class="fa-brands fa-twitter"></i></a>
+    </div>
+  </div>
+</form>
+  <br><br>
+  <hr>
+  <hr>
+  <br>
+  <div class="features">
+  <h3><i class="fa-solid-fa-arrow-right">Why Smart Xerox Services??</i></h3>
+<br>
+<h4><i class="fa-solid fa-upload"> Online Upload</i></h4>
+<h4><i class="fa-solid fa-print">Custom Print Options</i></h4>
+<h4><i class="fa-solid fa-money-check-dollar">Secure Payments</i></h4>
+<h4><i class="fa-solid fa-truck-fast">Fast Processing</i></h4>
+</div>
+<br>
+<hr>
+<hr>
+<br>
+   <footer class="footer">
+  <div class="footer-container">
+    <div class="footer-column">
+      <h3>Company</h3>
+      <ul>
+        <li><a href="{% url 'about' %}">About Us</a></li>
+        <li><a href="{% url 'services' %}">Our Services</a></li>
+        <li><a href="{% url 'privacy' %}">Privacy Policy</a></li>
+      </ul>
+    </div>
+    <div class="footer-column">
+      <h3>Get Help</h3>
+      <ul>
+        <li><a href="#">FAQ</a></li>
+        <li><a href="#">Returns</a></li>
+        <li><a href="#">Order Status</a></li>
+        <li><a href="#">Payment Options</a></li>
+      </ul>
+    </div>
+    <div class="footer-column">
+      <h3>Online Services</h3>
+      <ul>
+        <li><a href="#">Pdf printing</a></li>
+        <li><a href="#">Stationery items</a></li>
+        <li><a href="#">Collage pre-Doucments</a></li>
+      </ul>
+    </div>
+    <div class="footer-column">
+      <h3>Follow Us</h3>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+      </div>
+    </div>
+  </div>
+</footer>
+<script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>
