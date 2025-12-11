@@ -8,6 +8,7 @@
   <title>Main-Smart Xerox Services</title>
   <link rel="stylesheet" href="{% static 'css/Main.css' %}"/>
   <link rel="manifest" href="{% static 'manifest.json' %}">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" 
     integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" 
     crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -17,7 +18,7 @@
        <div class="navbar">
         <div class="nav_logo ">
               <div class="logo">
-                 <img src="static/logo.png" alt="logo">
+                 <img src="{% static 'logo.png' %}" alt="logo">
              </div>
              </div>
         <div class="nav-Home border">
@@ -31,6 +32,9 @@
         </div>
         <div class="nav-contact border">
           <i class="fa-solid fa-phone"><a href="{% url 'contact' %}" rel="content">Contact</a></i>
+        </div>
+        <div class="nav-Admin border">
+          <i class="fa-solid fa-user"> <a href="{% url 'admin_login' %}">Admin-Dashboard</a></i>
         </div>
        <div class="nav-LogOut border">
         <a href="{% url 'index' %}" rel="LogOut"><button class="button">LogOut</button></a></i>
@@ -88,25 +92,24 @@
 </div>
         <div class="form-group">
           <label for="printType">Print Type:</label><br>
-          <select id="printType" required>
-            <option value="">Select Type</option>
-            <option value="Colorprint">Color-Print</option>
-            <option value="Black&White">Black&White</option>
-          </select>
+         <select id="printType" required>
+  <option value="">Select Type</option>
+  <option value="Colorprint">Color-Print</option>
+  <option value="Black&White">Black&White</option>
+</select>
         </div>
              
         <div class="form-group">
           <label for="Orientation-Page">Orientation of a page:</label><br>
-          <select id="printType" required>
-            <option value="">Select Type</option>
-            <option value="Colorprint">portrait-(vertical)</option>
-            <option value="Black&White">landscape-(horizontal)</option>
-          </select>
+          <select id="orientation" required>
+  <option value="">Select Type</option>
+  <option value="portrait">Portrait (Vertical)</option>
+  <option value="landscape">Landscape (Horizontal)</option>
+</select>
         </div>
-
         <div class="form-group">
           <label for="No.ofcopies">Number of copies:</label><br>
-           <input type="number" id="page-count" name="page-count" placeholder="Enter a number of copies for your document ">
+           <input type="number" id="copies" placeholder="Enter number of copies" min="1">
         </div>
 
         <div class="form-group">
@@ -145,7 +148,7 @@
         <div class="form-group">
           <label for="page-count">Number of Pages:</label>
           <br>
-          <input type="number" id="page-count" name="page-count" min="1" max="25" placeholder="Enter number of pages">
+         <input type="number" id="pages" min="1" max="25" placeholder="Enter number of pages">
         </div>
 
         <div class="form-group">
@@ -163,6 +166,11 @@
   <ul id="reviewContent"></ul>
   <button class="submit-btn" onclick="proceedToPayment()">Proceed to Payment</button>
 </div>
+<div id="previewContainer" class="preview-container" style="display:none;">
+    <h4>Document Preview</h4>
+    <div id="previewContent"></div>
+</div>
+
      <div class="instructions-box">
   <h4>How to Use Smart Xerox Services</h4>
   <ul>
@@ -182,6 +190,6 @@
 
   </div>
   </div>
-  <script src="{% static 'script.js' %}"></script>
 </body>
+<script src="{% static 'js/script.js' %}"></script>
 </html>

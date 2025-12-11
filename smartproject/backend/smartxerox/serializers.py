@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from .models import smartxerox
+from .models import Customer
 
-class smartserialiezer(serializers.Modelserialiezer):
+class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
-        model=smartxerox
-        fields='_all_'
+        model = Customer
+        fields = "__all__"

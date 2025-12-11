@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'rest_framework',
     'smartxerox',
+    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -59,6 +60,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "django.contrib.sites.middleware.CurrentSiteMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 
 ]
 
@@ -75,6 +77,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+    'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -101,23 +105,24 @@ connect(
 
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'social_core.backends.google.GoogleOAuth2',
+)
 
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'APP': {
-            'client_id': '899444823284-ss5qrop66r7k3lp41f5bm22fmf5holhs.apps.googleusercontent.com',
-            'secret': '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',
-            'key': ''
-        }
-    }
-}
 
-LOGIN_URL= 'login'
-LOGOUT_URL= 'Sigout'
-LOGIN_REDIRECT_URL='main'
-ACCOUNT_LOGOUT_REDIRECT_URL='login'
-# Password validation
-# https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
+LOGIN_URL = 'user_login'
+LOGIN_REDIRECT_URL = '/main/'
+LOGOUT_REDIRECT_URL = '/'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/main/'
+SOCIAL_AUTH_LOGIN_ERROR_URL = '/login/'
+
+
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = "899444823284-mgmhbnrfs2hl93ebe0sib2bfccd4mlqm.apps.googleusercontent.com"
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = "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"
+
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -151,12 +156,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
 STATICFILES_DIRS = [
-     BASE_DIR / "backend"/ "static"
-     ]
-STATIC_ROOT= BASE_DIR / "staticfiles"
+    BASE_DIR / "static",  
+]
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

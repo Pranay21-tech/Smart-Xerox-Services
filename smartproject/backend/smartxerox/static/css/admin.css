@@ -1,0 +1,79 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+.admin-container {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    width: 240px;
+    background: #1E293B;
+    color: #fff;
+    padding: 20px;
+}
+
+.sidebar h2 {
+    margin-bottom: 20px;
+}
+
+.sidebar ul li {
+    list-style: none;
+    margin: 15px 0;
+}
+
+.sidebar ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+.sidebar ul li a.active {
+    font-weight: bold;
+    color: #38BDF8;
+}
+
+.main-content {
+    width: 100%;
+    padding: 25px;
+}
+
+header h1 {
+    margin-bottom: 20px;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+.order-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.order-table th, .order-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.order-table th {
+    background: #0f172a;
+    color: white;
+}
+
+.btn-approve, .btn-reject, .btn-print {
+    padding: 6px 12px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 2px;
+    border-radius: 4px;
+}
+
+.btn-approve { background: #16A34A; color: white; }
+.btn-reject { background: #DC2626; color: white; }
+.btn-print { background: #2563EB; color: white; }

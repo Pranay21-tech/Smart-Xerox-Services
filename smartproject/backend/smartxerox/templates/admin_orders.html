@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Orders</title>
+<link rel="stylesheet" href="{% static 'css/admin.css' %}">
+<meta name="csrf-token" content="{{ csrf_token }}">
+</head>
+
+<body>
+
+<div class="admin-container">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <h2>📄 Smart Xerox Admin</h2>
+        <ul>
+            <li><a href="{% url 'admin_orders' %}" class="active">📦 Orders</a></li>
+            <li><a href="#">📊 Reports</a></li>
+            <li><a href="#">🖨 Print Queue</a></li>
+            <li><a href="#">⚙ Settings</a></li>
+            <li><a href="{% url 'index' %}">⬅ Back to Home</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header>
+            <h1>Admin Order Dashboard</h1>
+        </header>
+
+        <div class="table-container">
+        <table class="order-table">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Document Type</th>
+                    <th>Print Type</th>
+                    <th>Orientation</th>
+                    <th>Copies</th>
+                    <th>Duplex</th>
+                    <th>Paper</th>
+                    <th>College Doc</th>
+                    <th>Pages</th>
+                    <th>Stationery</th>
+                    <th>Drive Link</th>
+                    <th>Order Time</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order.user_email }}</td>
+                    <td>{{ order.doc_type }}</td>
+                    <td>{{ order.print_type }}</td>
+                    <td>{{ order.orientation }}</td>
+                    <td>{{ order.copies }}</td>
+                    <td>{{ order.duplex_type }}</td>
+                    <td>{{ order.paper_size }}</td>
+                    <td>{{ order.college_doc }}</td>
+                    <td>{{ order.pages }}</td>
+                    <td>{{ order.stationery_items }}</td>
+
+                    <td>
+                        {% if order.drive_link %}
+                        <a href="{{ order.drive_link }}" target="_blank">Open Link</a>
+                        {% else %} None {% endif %}
+                    </td>
+
+                    <td>{{ order.created_at }}</td>
+
+                    <td>
+                       <button class="btn btn-success" onclick="changeStatus({{ order.id }}, 'Approved')">Approve</button>
+<button class="btn btn-danger" onclick="changeStatus({{ order.id }}, 'Rejected')">Reject</button>
+<button class="btn btn-primary" onclick="changeStatus({{ order.id }}, 'Printed')">Print</button>
+<button class="btn btn-primary" onclick="changeStatus({{ order.id }}, 'Completed')">Completed</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+        </div>
+    </main>
+</div>
+<script>
+function changeStatus(orderId, status) {
+    fetch(`/update-status/${orderId}/${status}/`)
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            alert("Status updated!");
+            location.reload();
+        }
+    });
+}
+</script>
+</body>
+</html>

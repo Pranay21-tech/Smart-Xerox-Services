@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="{% static 'css/admin_login.css' %}">
+</head>
+<body>
+
+<div class="login-container">
+    <div class="login-card">
+        <h2>Admin Login</h2>
+
+        {% if error %}
+        <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            <input type="text" name="username" placeholder="Enter Username" required>
+            <input type="password" name="password" placeholder="Enter Password" required>
+
+            <button type="submit" class="login-btn">Login</button>
+        </form>
+
+        <p class="note">Only authorized admins can access the dashboard.</p>
+    </div>
+</div>
+
+</body>
+</html>
