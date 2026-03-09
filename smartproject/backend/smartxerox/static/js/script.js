@@ -1,567 +1,164 @@
-// Helper: get CSRF token from <meta name="csrf-token" ...>
+let uploadedFile = null;
+
+console.log("SCRIPT LOADED");
+
+document.addEventListener("DOMContentLoaded", function () {
+
+  console.log("JS WORKING");
+
+  const fileInput = document.getElementById("file-upload");
+
+  if (fileInput) {
+    fileInput.addEventListener("change", function (e) {
+      uploadedFile = e.target.files[0];
+      console.log("Stored:", uploadedFile);
+    });
+  }
+
+});
+
+
+// =========================
+// CSRF Helper
+// =========================
 function getCSRFToken() {
   const meta = document.querySelector('meta[name="csrf-token"]');
   return meta ? meta.getAttribute("content") : "";
 }
 
-// Simple email check
+// =========================
+// Email Validator
+// =========================
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  // ================= LOGIN (index.html) =================
-  const loginForm = document.querySelector("#loginForm");
-  const loginEmail = document.querySelector("#loginEmail");
-  const loginPassword = document.querySelector("#loginPassword");
+document.addEventListener("DOMContentLoaded", function () {
 
-  if (loginForm) {
-    loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
+  console.log("JS WORKING");
 
-      const email = loginEmail.value.trim();
-      const password = loginPassword.value.trim();
+ let uploadedFile = null;
 
-      if (!email || !password) {
-        alert("⚠️ Please fill in all fields.");
-        return;
-      }
-      if (!isValidEmail(email)) {
-        alert("⚠️ Please enter a valid email.");
-        return;
-      }
+const fileInput = document.getElementById("file-upload");
+const uploadText = document.getElementById("uploadText");
+const previewContainer = document.getElementById("previewContainer");
+const previewContent = document.getElementById("previewContent");
 
-      try {
-        const res = await fetch("/login/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": getCSRFToken(),
-          },
-          body: JSON.stringify({ email, password }),
-        });
+// ==========================
+// FILE SELECT + PREVIEW
+// ==========================
+if (fileInput) {
+  fileInput.addEventListener("change", function (e) {
 
-        const data = await res.json();
+    uploadedFile = e.target.files[0];
 
-        if (data.status === "success") {
-          // Go to dashboard
-          window.location.href = "/main/";
-        } else {
-          alert("❌ " + (data.message || "Login failed"));
-        }
-      } catch (err) {
-        console.error(err);
-        alert("❌ Network error while logging in.");
-      }
-    });
-  }
+    if (!uploadedFile) return;
 
-  // ================= SIGNUP (Form.html) =================
-  const signupForm = document.querySelector("#signupForm");
-  const firstName = document.querySelector("#firstName");
-  const lastName = document.querySelector("#lastName");
-  const signEmail = document.querySelector("#signEmail");
-  const signPassword = document.querySelector("#signPassword");
-  const signConfirmPassword = document.querySelector("#signConfirmPassword");
-
-  if (signupForm) {
-    signupForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const fname = firstName.value.trim();
-      const lname = lastName.value.trim();
-      const email = signEmail.value.trim();
-      const password = signPassword.value.trim();
-      const confirm = signConfirmPassword.value.trim();
-
-      if (!fname || !lname || !email || !password || !confirm) {
-        alert("⚠️ All fields are required.");
-        return;
-      }
-      if (!isValidEmail(email)) {
-        alert("⚠️ Enter a valid email.");
-        return;
-      }
-      if (password.length < 6) {
-        alert("⚠️ Password must be at least 6 characters.");
-        return;
-      }
-      if (password !== confirm) {
-        alert("⚠️ Passwords do not match.");
-        return;
-      }
-
-      try {
-        const res = await fetch("/form/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": getCSRFToken(),
-          },
-          body: JSON.stringify({
-            firstname: fname,
-            lastname: lname,
-            email,
-            password,
-          }),
-        });
-
-        const data = await res.json();
-
-        if (data.status === "success") {
-          alert("✅ Sign up successful! Redirecting to dashboard…");
-          window.location.href = "/main/";
-        } else if (data.status === "exists") {
-          alert("⚠️ Email already exists. Please login.");
-          window.location.href = "/login/";
-        } else {
-          alert("❌ " + (data.message || "Signup failed"));
-        }
-      } catch (err) {
-        console.error(err);
-        alert("❌ Network error while signing up.");
-      }
-    });
-  }
-
-  // ================= MAIN UPLOAD (Main.html) =================
-  const reviewBox = document.querySelector("#reviewBox");
-  const reviewContent = document.querySelector("#reviewContent");
-
-  window.showReview = function () {
-    const docType = document.querySelector("#docType")?.value || "";
-    const driveLink = document.querySelector("#drive-link")?.value || "";
-    const printType = document.querySelector("#printType")?.value || "";
-    const orientation = document.querySelector("#Orientation-Page")?.value || "";
-    const copies = document.querySelector("#copies")?.value || document.querySelector("#page-count")?.value || "";
-    const duplexType = document.querySelector("#duplexType")?.value || "";
-    const paperSize = document.querySelector("#paperSize")?.value || "";
-    const collegeDoc = document.querySelector("#collegeDoc")?.value || "";
-    const pages = document.querySelector("#page-count")?.value || "";
-    const stationeryItems = document.querySelector("#stationery-items")?.value || "";
-
-    if (!reviewBox || !reviewContent) return;
-
-    reviewContent.innerHTML = "";
-    const addItem = (label, value) => {
-      const li = document.createElement("li");
-      li.textContent = `${label}: ${value || "N/A"}`;
-      reviewContent.appendChild(li);
-    };
-
-    addItem("Document Type", docType);
-    addItem("Drive Link", driveLink);
-    addItem("Print Type", printType);
-    addItem("Orientation", orientation);
-    addItem("Copies", copies);
-    addItem("Duplex", duplexType);
-    addItem("Paper Size", paperSize);
-    addItem("Pre-College Doc", collegeDoc);
-    addItem("Pages", pages);
-    addItem("Stationery Items", stationeryItems);
-
-    reviewBox.style.display = "block";
-  };
-
-  window.proceedToPayment = async function () {
-    if (!reviewBox) return;
-
-    const docType = document.querySelector("#docType")?.value || "";
-    const driveLink = document.querySelector("#drive-link")?.value || "";
-    const printType = document.querySelector("#printType")?.value || "";
-    const orientation = document.querySelector("#Orientation-Page")?.value || "";
-    const copies = document.querySelector("#page-count")?.value || "";
-    const duplexType = document.querySelector("#duplexType")?.value || "";
-    const paperSize = document.querySelector("#paperSize")?.value || "";
-    const collegeDoc = document.querySelector("#collegeDoc")?.value || "";
-    const pages = document.querySelector("#page-count")?.value || "";
-    const stationeryItems = document.querySelector("#stationery-items")?.value || "";
-
-    try {
-      const res = await fetch("/api/order/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": getCSRFToken(),
-        },
-        body: JSON.stringify({
-          docType,
-          driveLink,
-          printType,
-          orientation,
-          copies,
-          duplexType,
-          paperSize,
-          collegeDoc,
-          pages,
-          stationeryItems,
-        }),
-      });
-
-      const data = await res.json();
-      if (data.status === "success") {
-        alert("✅ Order placed successfully! (Demo payment)");
-        // Later: redirect to real Razorpay payment page.
-      } else {
-        alert("❌ " + (data.message || "Could not place order"));
-      }
-    } catch (err) {
-      console.error(err);
-      alert("❌ Network error while placing order.");
+    // Show file name
+    if (uploadText) {
+      uploadText.innerText = uploadedFile.name;
     }
-  };
-});
 
-document.getElementById("file-upload").addEventListener("change", function () {
-  const fileName = this.files[0]?.name || "No file selected";
-  console.log("File selected:", fileName);
+    // Only preview PDFs
+    if (uploadedFile.type === "application/pdf" && typeof pdfjsLib !== "undefined") {
 
-  document.querySelector(".upload-btn").innerText = fileName;
-});
+      const previewReader = new FileReader();
 
-console.log("JS loaded successfully");
+      previewReader.onload = function () {
 
-function showReview() {
+        const typedarray = new Uint8Array(this.result);
+
+        pdfjsLib.getDocument(typedarray).promise.then(function (pdf) {
+
+          pdf.getPage(1).then(function (page) {
+
+            const viewport = page.getViewport({ scale: 1 });
+            const canvas = document.createElement("canvas");
+            const context = canvas.getContext("2d");
+
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+
+            page.render({
+              canvasContext: context,
+              viewport: viewport
+            });
+
+            previewContent.innerHTML = "";
+            previewContent.appendChild(canvas);
+            previewContainer.style.display = "block";
+
+          });
+
+        });
+
+      };
+
+      // IMPORTANT: ArrayBuffer ONLY for preview
+      previewReader.readAsArrayBuffer(uploadedFile);
+    }
+
+  });
+}
+
+
+ window.proceedToPayment = async function () {
+
+
+
+  if (!uploadedFile) {
+    alert("Please upload a file!");
+    return;
+  }
+
   const docType = document.getElementById("docType").value;
   const printType = document.getElementById("printType").value;
   const orientation = document.getElementById("orientation").value;
-  const copies = document.getElementById("copies").value;
   const duplexType = document.getElementById("duplexType").value;
   const paperSize = document.getElementById("paperSize").value;
   const collegeDoc = document.getElementById("collegeDoc").value;
-  const pages = document.getElementById("pages").value;
   const stationeryItems = document.getElementById("stationery-items").value;
 
-  const reviewBox = document.getElementById("reviewBox");
-  const reviewContent = document.getElementById("reviewContent");
+  let copies = parseInt(document.getElementById("copies").value) || 1;
+  let pages = parseInt(document.getElementById("pages").value) || 1;
 
-  reviewContent.innerHTML = `
-    <li><strong>Document type:</strong> ${docType}</li>
-    <li><strong>Print Type:</strong> ${printType}</li>
-    <li><strong>Orientation:</strong> ${orientation}</li>
-    <li><strong>No of Copies:</strong> ${copies}</li>
-    <li><strong>Duplex/Simplex:</strong> ${duplexType}</li>
-    <li><strong>Paper Size:</strong> ${paperSize}</li>
-    <li><strong>College Document:</strong> ${collegeDoc}</li>
-    <li><strong>No Of Pages:</strong> ${pages}</li>
-    <li><strong>Stationery Items:</strong> ${stationeryItems}</li>
-  `;
+  // Pricing logic
+  let pricePerPage = 2;
 
-  reviewBox.style.display = "block";
-}
-
-function proceedToPayment() {
-  alert("Redirecting to Payment Page...");
-}
-function confirmOrder() {
-    alert("Order Confirmed! Redirecting to Payment...");
-    window.location.href = "/payment";  // update with your Django url if named
-}
-
-
-let uploadedFiles = [];
-
-document.getElementById("file-upload").addEventListener("change", function () {
-  Array.from(this.files).forEach(file => {
-    uploadedFiles.push(file);
-    previewPDFThumbnail(file);
-  });
-});
-//previewpdfthumbnail
-function previewPDFThumbnail(file) {
-  const reader = new FileReader();
-  reader.onload = function () {
-    const pdfData = new Uint8Array(this.result);
-
-    pdfjsLib.getDocument({ data: pdfData }).promise.then(pdf => {
-      pdf.getPage(1).then(page => {
-        const scale = 1.2;
-        const viewport = page.getViewport({ scale });
-
-        const canvas = document.createElement("canvas");
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
-
-        const ctx = canvas.getContext("2d");
-
-        page.render({
-          canvasContext: ctx,
-          viewport: viewport
-        }).promise.then(() => {
-          createFileCard(canvas.toDataURL(), file.name, file);
-        });
-      });
-    });
-  };
-  reader.readAsArrayBuffer(file);
-}
-
-function createFileCard(imageSrc, fileName, file) {
-  const cardContainer = document.getElementById("fileCardContainer");
-
-  const card = document.createElement("div");
-  card.className = "file-card";
-
-  const img = document.createElement("img");
-  img.src = imageSrc;
-
-  const name = document.createElement("div");
-  name.className = "file-name";
-  name.innerText = fileName;
-
-  const del = document.createElement("div");
-  del.className = "delete-btn";
-  del.innerHTML = "&times;";
-  del.onclick = () => {
-    card.remove();
-    uploadedFiles = uploadedFiles.filter(f => f !== file);
-  };
-
-  card.appendChild(del);
-  card.appendChild(img);
-  card.appendChild(name);
-
-  cardContainer.appendChild(card);
-}
-
-// script.js — replace your current script.js with this
-
-// Helper: get CSRF token from <meta name="csrf-token" ...>
-function getCSRFToken() {
-  const meta = document.querySelector('meta[name="csrf-token"]');
-  return meta ? meta.getAttribute("content") : "";
-}
-
-// small email validator (kept from your original helpers — not used here but safe)
-function isValidEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-
-  // ================= Elements (match your HTML ids) =================
-  const fileInput = document.getElementById("file-upload");
-  const uploadBtn = document.querySelector(".upload-btn");
-  const driveLinkInput = document.getElementById("drive-link");
-  const previewContainer = document.getElementById("previewContainer");
-  const previewContent = document.getElementById("previewContent");
-
-  const reviewBox = document.getElementById("reviewBox");
-  const reviewContent = document.getElementById("reviewContent");
-
-  // form fields
-  const docTypeEl = document.getElementById("docType");
-  const printTypeEl = document.getElementById("printType");
-  const orientationEl = document.getElementById("orientation");
-  const copiesEl = document.getElementById("copies");
-  const duplexEl = document.getElementById("duplexType");
-  const paperSizeEl = document.getElementById("paperSize");
-  const collegeDocEl = document.getElementById("collegeDoc");
-  const pagesEl = document.getElementById("pages");
-  const stationeryEl = document.getElementById("stationery-items");
-
-  // Single selected File reference (we keep only first file for preview & upload priority)
-  let uploadedFile = null;
-
-  // ================= File input handling =================
-  // change label text when file selected
-  fileInput.addEventListener("change", (e) => {
-    const f = e.target.files[0];
-    if (!f) {
-      uploadBtn.innerText = "Select document files";
-      uploadedFile = null;
-      previewContainer.style.display = "none";
-      previewContent.innerHTML = "";
-      return;
-    }
-
-    uploadedFile = f;
-    uploadBtn.innerText = f.name;
-
-    // Generate a thumbnail preview for PDF using pdf.js (first page)
-    if (f.type === "application/pdf") {
-      previewContent.innerHTML = ""; // clear
-      previewContainer.style.display = "block";
-      previewPDFThumbnail(f, previewContent);
-    } else {
-      // for non-pdf show a simple filename preview
-      previewContent.innerHTML = `<div class="file-plain-preview"><strong>Selected:</strong> ${escapeHtml(f.name)}</div>`;
-      previewContainer.style.display = "block";
-    }
-  });
-
-  // simple escape for displayed file names
-  function escapeHtml(s) {
-    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  if (printType === "Colorprint") {
+    pricePerPage = 5;
   }
 
-  // ====== PDF preview (first page) using pdfjsLib (already loaded from CDN in HTML) ======
-  function previewPDFThumbnail(file, targetEl) {
-    const reader = new FileReader();
-    reader.onload = function () {
-      const arrayBuffer = this.result;
-      const uint8 = new Uint8Array(arrayBuffer);
-      const loadingTask = pdfjsLib.getDocument({ data: uint8 });
-      loadingTask.promise.then(pdf => {
-        // get first page
-        pdf.getPage(1).then(page => {
-          const scale = 1.2;
-          const viewport = page.getViewport({ scale });
-
-          const canvas = document.createElement("canvas");
-          canvas.width = viewport.width;
-          canvas.height = viewport.height;
-          const ctx = canvas.getContext("2d");
-
-          page.render({
-            canvasContext: ctx,
-            viewport: viewport
-          }).promise.then(() => {
-            // append canvas to preview
-            targetEl.innerHTML = "";
-            const wrapper = document.createElement("div");
-            wrapper.className = "pdf-thumb-wrapper";
-            wrapper.appendChild(canvas);
-
-            const nameDiv = document.createElement("div");
-            nameDiv.className = "preview-file-name";
-            nameDiv.innerText = file.name;
-
-            wrapper.appendChild(nameDiv);
-            targetEl.appendChild(wrapper);
-          }).catch(err => {
-            console.error("Render error:", err);
-            targetEl.innerHTML = `<div>Could not render PDF preview. File: ${escapeHtml(file.name)}</div>`;
-          });
-        }).catch(err => {
-          console.error("Page error:", err);
-          targetEl.innerHTML = `<div>Could not open PDF page for preview. File: ${escapeHtml(file.name)}</div>`;
-        });
-      }).catch(err => {
-        console.error("PDF load error:", err);
-        targetEl.innerHTML = `<div>Could not load PDF for preview. File: ${escapeHtml(file.name)}</div>`;
-      });
-    };
-    reader.readAsArrayBuffer(file);
+  if (paperSize === "A3" || paperSize === "Letter" || paperSize === "Legal") {
+    pricePerPage += 2;
   }
 
-  // ================ Review logic (shows values) =================
-  // Called by your "Review & Confirm" button
-  window.showReview = function () {
-    if (!reviewBox || !reviewContent) return;
-
-    // read values from DOM (use exact ids from your HTML)
-    const docType = docTypeEl?.value || "";
-    const driveLink = driveLinkInput?.value?.trim() || "";
-    const printType = printTypeEl?.value || "";
-    const orientation = orientationEl?.value || "";
-    const copies = copiesEl?.value || "";
-    const duplexType = duplexEl?.value || "";
-    const paperSize = paperSizeEl?.value || "";
-    const collegeDoc = collegeDocEl?.value || "";
-    const pages = pagesEl?.value || "";
-    const stationeryItems = stationeryEl?.value || "";
-
-    // compose review; file has priority over drive link
-    reviewContent.innerHTML = ""; // clear
-
-    const addItem = (label, value) => {
-      const li = document.createElement("li");
-      li.innerHTML = `<strong>${escapeHtml(label)}:</strong> ${escapeHtml(value || "N/A")}`;
-      reviewContent.appendChild(li);
-    };
-
-    addItem("Document Type", formatValue(docType));
-    if (uploadedFile) {
-      addItem("Selected File", uploadedFile.name);
-    } else {
-      addItem("Drive Link", driveLink || "N/A");
-    }
-    addItem("Print Type", formatValue(printType));
-    addItem("Orientation", formatOrientation(orientation));
-    addItem("Copies", copies || "1");
-    addItem("Duplex", duplexType || "N/A");
-    addItem("Paper Size", paperSize || "N/A");
-    addItem("Pre-College Doc", collegeDoc || "N/A");
-    addItem("Pages", pages || "N/A");
-    addItem("Stationery Items", stationeryItems || "N/A");
-
-    reviewBox.style.display = "block";
-    // scroll into view
-    reviewBox.scrollIntoView({ behavior: "smooth", block: "center" });
-  };
-
-  // small formatter helpers
-  function formatValue(v) {
-    if (!v) return "N/A";
-    // convert snake like or camel values to readable if needed (basic)
-    return v.replace(/[_\-]/g, " ");
-  }
-  function formatOrientation(o) {
-    if (!o) return "N/A";
-    if (o.toLowerCase() === "portrait") return "Portrait (Vertical)";
-    if (o.toLowerCase() === "landscape") return "Landscape (Horizontal)";
-    return o;
+  if (collegeDoc && collegeDoc !== "none") {
+    pricePerPage += 5;
   }
 
-  // ================= Submit order (Proceed to Payment) =================
-  // This will send JSON to /api/order/ — if file is selected we send base64 as fileData
-  window.proceedToPayment = async function () {
-    // Collect form values again
-    const docType = docTypeEl?.value || "";
-    const driveLink = driveLinkInput?.value?.trim() || "";
-    const printType = printTypeEl?.value || "";
-    const orientation = orientationEl?.value || "";
-    const copies = copiesEl?.value || "";
-    const duplexType = duplexEl?.value || "";
-    const paperSize = paperSizeEl?.value || "";
-    const collegeDoc = collegeDocEl?.value || "";
-    const pages = pagesEl?.value || "";
-    const stationeryItems = stationeryEl?.value || "";
+  const amountINR = pages * copies * pricePerPage;
 
-    // Basic client-side validation (you can expand)
-    if (!docType) { alert("Please select Document Type."); return; }
-    if (!printType) { alert("Please select Print Type."); return; }
-    if (!orientation) { alert("Please select Orientation."); return; }
-    if (!copies || Number(copies) < 1) { alert("Enter at least 1 copy."); return; }
+  try {
 
-    // Prepare payload
-    const payload = {
-      docType,
-      printType,
-      orientation,
-      copies,
-      duplexType,
-      paperSize,
-      collegeDoc,
-      pages,
-      stationeryItems,
-      driveLink: null,
-      fileName: null,
-      fileData: null
-    };
+    const uploadReader = new FileReader();
 
-    // If a file was uploaded, read it as Base64 and attach
-    if (uploadedFile) {
-      try {
-        const base64 = await readFileAsDataURL(uploadedFile);
-        payload.fileName = uploadedFile.name;
-        payload.fileData = base64; // "data:application/pdf;base64,...."
-      } catch (err) {
-        console.error("File read error:", err);
-        alert("Could not read the file for upload. Try again.");
-        return;
-      }
-    } else if (driveLink) {
-      payload.driveLink = driveLink;
-    } else {
-      // neither file nor drive link — ask user
-      const ok = confirm("You didn't provide a file or a drive link. Continue without an attached document?");
-      if (!ok) return;
-    }
+    uploadReader.onload = async function () {
 
-    // Send to server
-    try {
+      const payload = {
+        docType,
+        printType,
+        orientation,
+        copies,
+        duplexType,
+        paperSize,
+        collegeDoc,
+        pages,
+        stationeryItems,
+        fileName: uploadedFile.name,
+        fileData: uploadReader.result   // Base64
+      };
+
       const res = await fetch("/api/order/", {
         method: "POST",
         headers: {
@@ -572,32 +169,146 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       const data = await res.json();
-      if (data.status === "success") {
-        alert("✅ Order placed successfully! (Demo payment)");
-        // optionally redirect: window.location.href = "/payment/";
-      } else {
-        alert("❌ " + (data.message || "Could not place order"));
-      }
-    } catch (err) {
-      console.error("Network error:", err);
-      alert("❌ Network error while placing order.");
-    }
-  };
 
-  // helper: read file as dataURL (base64)
-  function readFileAsDataURL(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = function () { resolve(reader.result); };
-      reader.onerror = function (e) { reject(e); };
-      reader.readAsDataURL(file);
-    });
+      if (res.ok && data.status === "success") {
+
+        window.location.href =
+          `/payment/?amount=${amountINR}&order_id=${data.order_id}`;
+
+      } else {
+        alert("Order save failed.");
+      }
+    };
+
+    // IMPORTANT: DataURL for upload
+    uploadReader.readAsDataURL(uploadedFile);
+
+  } catch (err) {
+    console.error(err);
+    alert("Upload failed.");
+  }
+};
+
+});
+
+
+
+
+// REVIEW FUNCTION
+window.showReview = function () {
+
+  if (!uploadedFile) {
+    alert("Please upload file first!");
+    return;
   }
 
-  // expose confirmOrder if you want a separate confirm step
-  window.confirmOrder = function () {
-    alert("Order Confirmed! Redirecting to Payment...");
-    window.location.href = "/payment";
-  };
+  const printType = document.getElementById("printType").value;
+  const paperSize = document.getElementById("paperSize").value;
+  const copies = document.getElementById("copies").value || 1;
+  const pages = document.getElementById("pages").value || 1;
+  const collegeDoc = document.getElementById("collegeDoc").value;
 
-}); // end DOMContentLoaded
+  const reviewContent = document.getElementById("reviewContent");
+
+  reviewContent.innerHTML = `
+    <li><strong>File:</strong> ${uploadedFile.name}</li>
+    <li><strong>Print Type:</strong> ${printType}</li>
+    <li><strong>Paper Size:</strong> ${paperSize}</li>
+    <li><strong>Copies:</strong> ${copies}</li>
+    <li><strong>College Doc:</strong> ${collegeDoc}</li>
+    <li><strong>Pages:</strong> ${pages}</li>
+  `;
+
+  document.getElementById("reviewBox").style.display = "block";
+  document.getElementById("payment-section").style.display = "block";  // ✅ ADD THIS
+};
+
+
+// =========================
+// payment handler
+// =========================
+ 
+ var options = {
+    "key": "rzp_test_RmdIpA3ijpGtom",
+    "amount": amount * 100,
+    "currency": "INR",
+    "name": "Smart Xerox Services",
+    "description": "Print Order Payment",
+    "order_id": order_id,
+
+    "handler": function (response) {
+
+        fetch("/payment/verify/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+    if (data.status === "success") {
+      window.location.href =
+                "/payment/success/?order_id=" +
+                order_id +    // ✅ YOUR ORDER ID
+                "&payment_id=" +
+                response.razorpay_payment_id;
+
+    }
+});
+    },
+
+    "modal": {
+        "ondismiss": function () {
+            window.location.href = "/main/";
+        }
+    }
+};
+
+var rzp1 = new Razorpay(options);
+
+rzp1.on('payment.failed', function () {
+    window.location.href = "/main/";
+});
+
+rzp1.open();
+
+
+function startPayment() {
+
+    let name = document.getElementById("custName").value.trim();
+    let email = document.getElementById("custEmail").value.trim();
+    let phone = document.getElementById("custPhone").value.trim();
+
+    if (!name || !email || !phone) {
+        alert("Please fill all fields.");
+        return;
+    }
+
+    var options = {
+        "key": "{{ razorpay_key_id }}",
+        "amount": "{{ amount }}00",
+        "currency": "INR",
+        "name": "Smart Xerox Services",
+        "description": "Document Print Payment",
+
+        "handler": function (response) {
+
+            window.location.href =
+                `/payment/success/?order_id={{ order_id }}&payment_id=${response.razorpay_payment_id}&phone=${phone}`;
+        },
+
+        "prefill": {
+            "name": name,
+            "email": email,
+            "contact": phone
+        }
+    };
+
+    var rzp1 = new Razorpay(options);
+    rzp1.open();
+}

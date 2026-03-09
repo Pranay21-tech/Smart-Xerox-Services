@@ -77,3 +77,15 @@ header h1 {
 .btn-approve { background: #16A34A; color: white; }
 .btn-reject { background: #DC2626; color: white; }
 .btn-print { background: #2563EB; color: white; }
+.status-box {
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.status-box.pending { background: #ffeaa7; color: #b06f00; }
+.status-box.approved { background: #55efc4; color: #006f4f; }
+.status-box.rejected { background: #ff7675; color: #7f1d1d; }
+.status-box.printed { background: #74b9ff; color: #0a3d91; }
+.status-box.completed { background: #a29bfe; color: #372f85; }
+

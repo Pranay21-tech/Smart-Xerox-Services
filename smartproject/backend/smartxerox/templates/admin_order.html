@@ -1,0 +1,107 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Orders</title>
+<link rel="stylesheet" href="{% static 'css/admin.css' %}">
+</head>
+
+<body>
+
+<div class="admin-container">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <h2>📄 Smart Xerox Admin</h2>
+        <ul>
+            <li><a href="{% url 'admin_orders' %}" class="active">📦 Orders</a></li>
+            <li><a href="{% url 'printQueue_admin' %}">🖨 Print Queue</a></li>
+            <li><a href="{% url 'admin_settings' %}">⚙ Settings</a></li>
+            <li><a href="{% url 'index' %}">⬅ Back to Home</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header>
+            <h1>Admin Order Dashboard</h1>
+        </header>
+
+        <div class="table-container">
+        <table class="order-table">
+
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>PDF</th>
+                    <th>Pages</th>
+                    <th>Copies</th>
+                    <th>Print Type</th>
+                    <th>Price (₹)</th>
+                    <th>Uploaded Time</th>
+                    <th>Pickup Code</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order.user_email }}</td>
+
+                    <!-- PDF OPEN -->
+                    <td>
+                        {% if order.file_path %}
+                           <a href="{% url 'open_print_file' order.order_id %}">View PDF</a>
+                        {% else %}
+                            No File
+                        {% endif %}
+                    </td>
+
+                    <td>{{ order.pages }}</td>
+                    <td>{{ order.copies }}</td>
+                    <td>{{ order.print_type }}</td>
+                    <td>₹ {{ order.total_price }}</td>
+                    <td>{{ order.created_at }}</td>
+                    <td><b>{{ order.pickup_code }}</b></td>
+
+                    <td>
+                        {% if order.status == "Pending" %}
+                            🟡 Pending
+                        {% elif order.status == "Printed" %}
+                            🖨 Printed
+                        {% elif order.status == "Completed" %}
+                            ✅ Completed
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        <!-- Send to Print Queue -->
+                        <form method="POST" action="{% url 'send_to_print_queue' %}">
+    {% csrf_token %}
+    <input type="hidden" name="order_id" value="{{ order.id }}">
+    <button type="submit">Print</button>
+</form>
+
+
+                        <!-- Mark Completed -->
+                        <form method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="order_id" value="{{ order.id }}">
+                            <button name="action" value="completed">✅ Complete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

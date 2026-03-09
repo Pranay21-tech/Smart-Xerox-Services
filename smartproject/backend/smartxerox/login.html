@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EVP Parking - Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f4f4f4;
+        }
+
+        .header {
+            background: linear-gradient(to right, #0066ff, #00ccff);
+            padding: 15px;
+            color: white;
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .login-container {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        input {
+            padding: 5px;
+            margin: 5px;
+        }
+
+        button {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .footer {
+            margin-top: 60px;
+            background: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        a {
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    EVP Parking
+</div>
+
+<div class="login-container">
+    <h3>Login</h3>
+
+    <form id="loginForm">
+        Username <input type="text" id="username" required>
+        Password <input type="password" id="password" required>
+        <button type="submit">Login</button>
+    </form>
+
+    <p>Don't have an account?
+        <a href="signup.html">Register</a>
+    </p>
+</div>
+
+<div class="footer">
+    © 2024 EVP Parking. All rights reserved.
+</div>
+
+<script>
+document.getElementById("loginForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    try {
+        const response = await fetch("http://localhost:3000/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ username, password })
+        });
+
+        const data = await response.json();
+
+        if(response.ok) {
+            alert("Login Successful!");
+            localStorage.setItem("token", data.token);
+            window.location.href = "main.html"; // redirect
+        } else {
+            alert(data);
+        }
+    } catch (error) {
+        alert("Server error");
+    }
+});
+</script>
+
+</body>
+</html>

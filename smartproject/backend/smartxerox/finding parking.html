@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Find Parking</title>
+<style>
+body { font-family: Arial; background:#f4f4f4; margin:0; }
+
+.header {
+    background: linear-gradient(to right,#0066ff,#00ccff);
+    padding:15px;
+    color:white;
+    text-align:center;
+}
+
+.container { text-align:center; margin-top:20px; }
+
+.parking-slot {
+    background:white;
+    margin:15px auto;
+    padding:15px;
+    width:60%;
+    border-radius:10px;
+    box-shadow:0 2px 5px rgba(0,0,0,0.2);
+}
+
+button {
+    padding:8px 15px;
+    border:none;
+    border-radius:5px;
+    background:#28a745;
+    color:white;
+    cursor:pointer;
+}
+
+#notification {
+    display:none;
+    position:fixed;
+    top:10px;
+    right:10px;
+    background:#28a745;
+    padding:10px;
+    color:white;
+    border-radius:5px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>Smart Parking System</h1>
+</div>
+
+<div class="container">
+    <h2>Find Parking</h2>
+    <input type="text" id="location" placeholder="Enter Location">
+    <input type="datetime-local" id="bookingTime">
+    <button onclick="updateParkingSlots()">Search</button>
+</div>
+
+<div id="parkingList"></div>
+<div id="notification"></div>
+
+<script>
+
+function updateParkingSlots() {
+    let location = document.getElementById("location").value;
+    let list = document.getElementById("parkingList");
+    list.innerHTML = "";
+
+    if(location.trim() === "") {
+        alert("Enter location");
+        return;
+    }
+
+    for(let i=1;i<=5;i++){
+        let div = document.createElement("div");
+        div.className = "parking-slot";
+        div.innerHTML = `
+            <h3>Parking Spot ${i}</h3>
+            <p><strong>Address:</strong> ${location}</p>
+            <p class="details"></p>
+            <p class="timer"></p>
+            <button onclick="confirmBooking(this)">Book</button>
+        `;
+        list.appendChild(div);
+    }
+}
+
+function confirmBooking(btn){
+    let name = prompt("Enter your name:");
+    let vehicle = prompt("Vehicle type:");
+    let number = prompt("Vehicle number:");
+
+    if(!name || !vehicle || !number) return;
+
+    let parent = btn.parentElement;
+    let now = new Date();
+    let expire = new Date(now.getTime() + 2*60*60*1000);
+
+    parent.querySelector(".details").innerText =
+        `Booked by: ${name} | ${vehicle} (${number}) | Time: ${now.toLocaleTimeString()}`;
+
+    btn.innerText="Cancel";
+    btn.style.background="#dc3545";
+    btn.onclick=function(){ cancelBooking(btn); };
+
+    startCountdown(parent.querySelector(".timer"), expire, btn);
+    showNotification("Booking Successful!");
+}
+
+function cancelBooking(btn){
+    let parent = btn.parentElement;
+    parent.querySelector(".details").innerText="";
+    parent.querySelector(".timer").innerText="";
+    btn.innerText="Book";
+    btn.style.background="#28a745";
+    btn.onclick=function(){ confirmBooking(btn); };
+    showNotification("Booking Cancelled");
+}
+
+function startCountdown(element,endTime,btn){
+    let timer = setInterval(()=>{
+        let now = new Date();
+        let diff = endTime - now;
+
+        if(diff<=0){
+            clearInterval(timer);
+            cancelBooking(btn);
+            return;
+        }
+
+        let h = Math.floor(diff/(1000*60*60));
+        let m = Math.floor((diff%(1000*60*60))/(1000*60));
+        let s = Math.floor((diff%(1000*60))/1000);
+
+        element.innerText=`Cancel within: ${h}h ${m}m ${s}s`;
+    },1000);
+}
+
+function showNotification(msg){
+    let n = document.getElementById("notification");
+    n.innerText=msg;
+    n.style.display="block";
+    setTimeout(()=>{ n.style.display="none"; },3000);
+}
+
+</script>
+</body>
+</html>

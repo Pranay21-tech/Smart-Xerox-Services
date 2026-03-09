@@ -127,17 +127,16 @@ integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+
     <div class="footer-column">
       <h3>Get Help</h3>
       <ul>
-        <li><a href="#">FAQ</a></li>
-        <li><a href="#">Returns</a></li>
-        <li><a href="#">Order Status</a></li>
-        <li><a href="#">Payment Options</a></li>
+        <li><a href="{% url 'faq' %}">FAQ</a></li>
+        <li><a href="{% url 'form' %}">Order Status</a></li>
+        <li><a href="{% url 'form' %}">Payments</a></li>
       </ul>
     </div>
     <div class="footer-column">
       <h3>Online Services</h3>
       <ul>
         <li><a href="#">Pdf printing</a></li>
-        <li><a href="#">Stationery items</a></li>
+        <li><a href="{% url 'stationery' %}">Stationery items</a></li>
         <li><a href="#">Collage pre-Doucments</a></li>
       </ul>
     </div>

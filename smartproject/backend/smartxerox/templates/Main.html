@@ -7,7 +7,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Main-Smart Xerox Services</title>
   <link rel="stylesheet" href="{% static 'css/Main.css' %}"/>
-  <link rel="manifest" href="{% static 'manifest.json' %}">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" 
     integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" 
@@ -36,9 +35,17 @@
         <div class="nav-Admin border">
           <i class="fa-solid fa-user"> <a href="{% url 'admin_login' %}">Admin-Dashboard</a></i>
         </div>
-       <div class="nav-LogOut border">
-        <a href="{% url 'index' %}" rel="LogOut"><button class="button">LogOut</button></a></i>
-       </div>
+       <div class="nav-user-section">
+  <div class="user-info">
+    <i class="fa-solid fa-circle-user"></i>
+    <span>{{ user_email }}</span>
+  </div>
+
+  <a href="{% url 'index' %}">
+    <button class="button">LogOut</button>
+  </a>
+</div>
+
        </div>
       </header>
   <hr>
@@ -64,67 +71,60 @@
             <option value="docx">DOCX</option>
              <option value="PPt">PPt</option>
             <option value="image">Image</option>
-            <option value="drive-link">drive-link</option>
           </select>
         </div>
 
         <div class="form-group">
-  <label for="file-upload">Select Document:</label><br>
+          <br>
+  <div class="form-group">
+  <label>Select Document:</label>
 
-  <div class="upload-row">
-    <label class="upload-btn" for="file-upload">Select document files</label>
+  <div class="upload-box">
+    <label for="file-upload" class="upload-area">
+      <i class="fa-solid fa-cloud-arrow-up"></i>
+      <p id="uploadText">Select document files</p>
+      <small>Click here to upload</small>
+    </label>
+
     <input type="file" id="file-upload" style="display: none;" />
-
-    <div class="side-icons">
-      <button type="button" class="icon" onclick="alert('Upload your file to Google Drive and paste the link below.')">
-        <i class="fab fa-google-drive"></i>
-      </button>
-      <button type="button" class="icon">
-        <i class="fab fa-dropbox"></i>
-      </button>
-    </div>
   </div>
-
-  <label for="drive-link" style="margin-top: 15px;"><b>Paste Google Drive Link:</b></label><br>
-  <input type="url" id="drive-link" name="drive-link" placeholder="https://drive.google.com/..." required>
-
-  <p class="drag-text">Or drop Documents here...</p>
 </div>
+<br>
         <div class="form-group">
           <label for="printType">Print Type:</label><br>
-         <select id="printType" required>
+         <select id="printType">
   <option value="">Select Type</option>
-  <option value="Colorprint">Color-Print</option>
   <option value="Black&White">Black&White</option>
+  <option value="Colorprint">Color-Print</option>
 </select>
         </div>
-             
+             <br>
         <div class="form-group">
           <label for="Orientation-Page">Orientation of a page:</label><br>
-          <select id="orientation" required>
+          <select id="orientation">
   <option value="">Select Type</option>
   <option value="portrait">Portrait (Vertical)</option>
   <option value="landscape">Landscape (Horizontal)</option>
 </select>
-        </div>
+        </div><br>
         <div class="form-group">
           <label for="No.ofcopies">Number of copies:</label><br>
            <input type="number" id="copies" placeholder="Enter number of copies" min="1">
         </div>
-
+<br>
         <div class="form-group">
           <label for="duplexType">Simplex/Duplex Printing:</label><br>
-          <select id="duplexType" required>
+          <select id="duplexType">
             <option value="">Select Type</option>
             <option value="Simplex">Simplex (One-side)</option>
             <option value="Duplex">Duplex (Two-sides)</option>
           </select>
         </div>
-
+<br>
         <div class="form-group">
           <label for="paperSize">Paper Size:</label>
           <br>
-          <select id="paperSize" required>
+          <select id="paperSize">
             <option value="">Select Type</option>
             <option value="A4">A4 Sheet</option>
             <option value="A3">A3 Sheet</option>
@@ -132,11 +132,11 @@
             <option value="Legal">Legal</option>
           </select>
         </div>
-
+<br>
         <div class="form-group">
           <label for="collegeDoc">Pre-College Document:</label>
           <br>
-          <select id="collegeDoc" required>
+          <select id="collegeDoc">
             <option value="">Select Type</option>
             <option value="leave">Leave Letter</option>
             <option value="undertaking">Undertaking Form</option>
@@ -144,33 +144,36 @@
             <option value="none">None</option>
           </select>
         </div>
-
+<br>
         <div class="form-group">
           <label for="page-count">Number of Pages:</label>
           <br>
-         <input type="number" id="pages" min="1" max="25" placeholder="Enter number of pages">
+         <input type="number" id="pages" placeholder="Enter number of pages">
         </div>
-
+<br>
         <div class="form-group">
           <label for="stationery items">stationery items:</label>
           <br>
-          <input type="stationery items" id="stationery-items" name="stationery items" placeholder="Type required Stationery items--">
-        </div>
-      </form>
-      <br>
-      <div class="button3">
-          <button type="button" class="submit-btn" onclick="showReview()">Review & Confirm</button>
-        </div>
-        <div id="reviewBox" class="review-box" style="display: none;">
-  <h3>Review Your Submission</h3>
-  <ul id="reviewContent"></ul>
-  <button class="submit-btn" onclick="proceedToPayment()">Proceed to Payment</button>
-</div>
-<div id="previewContainer" class="preview-container" style="display:none;">
-    <h4>Document Preview</h4>
-    <div id="previewContent"></div>
+          <input type="text" id="stationery-items" 
+       placeholder="Type required stationery items"> </div>
+        <br>
+        <div id="previewContainer" style="display:none; margin-top:20px;">
+  <h4>Document Preview</h4>
+  <div id="previewContent"></div>
 </div>
 
+<button type="button" onclick="showReview()">Review & Confirm</button>
+<div id="reviewBox" class="review-box" style="display:none; margin-top:20px;">
+  <h3>Review Your Submission</h3>
+  <ul id="reviewContent"></ul>
+
+ <div id="payment-section" style="display:none;">
+   <button type="button" onclick="proceedToPayment()">Proceed to Payment</button>
+</div>
+
+</div>
+      </form>
+<br>
      <div class="instructions-box">
   <h4>How to Use Smart Xerox Services</h4>
   <ul>
@@ -190,6 +193,55 @@
 
   </div>
   </div>
-</body>
+  <br>
+<hr>
+<hr>
+<br>
+   <footer class="footer">
+  <div class="footer-container">
+
+    <div class="footer-column">
+      <h3>Company</h3>
+      <ul>
+        <li><a href="{% url 'about' %}">About Us</a></li>
+        <li><a href="{% url 'services' %}">Our Services</a></li>
+        <li><a href="{% url 'privacy' %}">Privacy Policy</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-column">
+      <h3>Get Help</h3>
+      <ul>
+        <li><a href="{% url 'faq' %}">FAQ</a></li>
+        <li><a href="#">Order Status</a></li>
+        <li><a href="#">Payments</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-column">
+      <h3>Online Services</h3>
+      <ul>
+        <li><a href="#">PDF Printing</a></li>
+        <li><a href="#">College Pre-Documents</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-column">
+      <h3>Follow Us</h3>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    © 2026 Smart Xerox Services | All Rights Reserved
+  </div>
+</footer>
 <script src="{% static 'js/script.js' %}"></script>
+</body>
 </html>

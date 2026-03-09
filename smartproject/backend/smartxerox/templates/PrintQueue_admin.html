@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Print Queue</title>
+</head>
+
+<body>
+<div class="queue-header">
+  <h1>🖨️ Print Queue</h1>
+  <a href="{% url 'admin_orders' %}" class="btn btn-secondary back-btn">
+    ← Back
+  </a>
+</div>
+
+<table class="table">
+  <tr>
+    <th>Order ID</th>
+    <th>Customer</th>
+    <th>File</th>
+    <th>Pages</th>
+    <th>Type</th>
+    <th>Copies</th>
+    <th>Status</th>
+    <th>Actions</th>
+  </tr>
+
+  {% for order in orders %}
+  <tr>
+    <td>{{ order.order_id }}</td>
+    <td>{{ order.customer_name }}</td>
+    <td>{{ order.file_name }}</td>
+    <td>{{ order.pages }}</td>
+    <td>{{ order.print_type }}</td>
+    <td>{{ order.copies }}</td>
+
+    <td>
+      {% if order.status == "waiting" %}
+        <span class="status waiting">🟢 Ready</span>
+      {% elif order.status == "printing" %}
+        <span class="status printing">🟡 Printing</span>
+      {% elif order.status == "done" %}
+        <span class="status done">✅ Done</span>
+      {% else %}
+        <span class="status error">🔴 Error</span>
+      {% endif %}
+    </td>
+
+    <td>
+      <form method="post" style="display:inline;">
+        {% csrf_token %}
+        <input type="hidden" name="order_id" value="{{ order.id }}">
+        <a href="{% url 'open_print_file' order.id %}">▶</a>
+        <button name="action" value="Pause">⏸</button>
+        <button name="action" value="cancel">❌</button>
+        <button name="action" value="reprint">🔁</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+<style>
+body {
+  font-family: Poppins, sans-serif;
+  background: #f4f6f9;
+  padding: 30px;
+}
+
+.queue-header {
+  margin-bottom: 20px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.table th, .table td {
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.status {
+  font-weight: 600;
+}
+
+.waiting { color: green; }
+.printing { color: orange; }
+.done { color: #2563eb; }
+.error { color: red; }
+
+button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 16px;
+  margin-right: 5px;
+}
+.btn-secondary {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  background: var(--border);
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+</style>
+
+</body>
+</html>

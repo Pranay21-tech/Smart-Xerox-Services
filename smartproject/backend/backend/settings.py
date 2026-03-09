@@ -163,11 +163,35 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = "/media/"
+
 
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ==========================
+# FILE & JSON UPLOAD LIMITS
+# ==========================
+DATA_UPLOAD_MAX_MEMORY_SIZE = 52428800     # 50 MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 52428800     # 50 MB
+DATA_UPLOAD_MAX_NUMBER_FIELDS = None       # Allow large JSON
+
+# ===========================================
+# RAZORPAY TEST KEYS  (DUMMY - REPLACE LATER)
+# ===========================================
+
+RAZORPAY_KEY_ID = "rzp_test_RmdIpA3ijpGtom"
+RAZORPAY_KEY_SECRET = "***********************"
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'smartxeroxservice26@gmail.com'
+EMAIL_HOST_PASSWORD = 'tllpuaylasqrdyws'
+

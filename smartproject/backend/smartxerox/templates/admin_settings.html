@@ -1,0 +1,324 @@
+<title>Admin Settings - Smart Xerox</title>
+<div class="settings-header">
+  <h1>⚙️ Admin Settings</h1>
+
+  <a href="{% url 'admin_orders' %}" class="btn btn-secondary back-btn">
+    ← Back
+  </a>
+</div>
+<section class="settings-card">
+  <h2>🔐 Account & Security</h2>
+
+  <label>Admin Username</label>
+  <input type="text" value="admin_pranay" disabled>
+
+  <label>Admin Email</label>
+  <input type="email" value="admin@smartxerox.com">
+
+  <h3>Change Password</h3>
+  <input type="password" placeholder="Current Password">
+  <input type="password" placeholder="New Password">
+  <input type="password" placeholder="Confirm New Password">
+
+  <button class="btn-primary">Update Account</button>
+</section>
+
+<section class="settings-card">
+  <h2>👥 Admin Management</h2>
+
+  <input type="email" placeholder="New Admin Email">
+  <select>
+    <option>Admin</option>
+    <option>Staff</option>
+  </select>
+  <button class="btn-primary">Add Admin</button>
+
+  <table>
+    <tr>
+      <th>Email</th>
+      <th>Role</th>
+      <th>Action</th>
+    </tr>
+    <tr>
+      <td>staff@smartxerox.com</td>
+      <td>Staff</td>
+      <td><button class="btn-danger">Remove</button></td>
+    </tr>
+  </table>
+</section>
+
+<section class="settings-card">
+  <h2>📜 Login History</h2>
+
+  <table>
+    <tr>
+      <th>Date</th>
+      <th>IP Address</th>
+      <th>Device</th>
+    </tr>
+    <tr>
+      <td>09-Feb-2026 10:12 AM</td>
+      <td>192.168.1.25</td>
+      <td>Chrome / Windows</td>
+    </tr>
+  </table>
+</section>
+
+<section class="settings-card">
+  <h2>📦 File Upload Settings</h2>
+
+  <label>Max File Size (MB)</label>
+  <input type="number" value="20">
+
+  <label>Allowed File Formats</label>
+  <div class="checkbox-group">
+    <label><input type="checkbox" checked> PDF</label>
+    <label><input type="checkbox" checked> DOCX</label>
+    <label><input type="checkbox" checked> JPG</label>
+    <label><input type="checkbox"> PNG</label>
+  </div>
+</section>
+
+<section class="settings-card">
+  <h2>🗑️ Auto File Cleanup</h2>
+
+  <label>Auto-delete files after (days)</label>
+  <input type="number" value="7">
+</section>
+
+<section class="settings-card">
+  <h2>🕘 Working Hours</h2>
+
+  <label>Start Time</label>
+  <input type="time" value="09:00 AM ">
+
+  <label>End Time</label>
+  <input type="time" value="18:00 PM">
+
+  <label>
+    <input type="checkbox" checked>
+    Accept Orders Outside Working Hours
+  </label>
+</section>
+
+<section class="settings-card">
+  <h2>🌗 Appearance</h2>
+
+  <label class="switch">
+    <input type="checkbox" id="themeToggle">
+    <span class="slider"></span>
+  </label>
+  <span id="themeText">Light Mode</span>
+</section>
+
+<style>
+    /* Header */
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.settings-header h1 {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+/* Back Button */
+.btn-secondary {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  background: var(--border);
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+:root {
+  --bg: #f4f6f9;
+  --card: #ffffff;
+  --text: #111827;
+  --muted: #6b7280;
+  --primary: #2563eb;
+  --danger: #dc2626;
+  --border: #e5e7eb;
+}
+
+body.dark {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --text: #f8fafc;
+  --muted: #94a3b8;
+  --border: #334155;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Poppins", system-ui, sans-serif;
+  padding: 30px;
+}
+
+.settings-card {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 22px;
+  margin-bottom: 24px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+}
+
+.settings-card h2 {
+  margin-bottom: 16px;
+  font-size: 18px;
+}
+
+.settings-card h3 {
+  margin: 14px 0 10px;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+/* Inputs */
+.input,
+.settings-card input,
+.settings-card select {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  outline: none;
+}
+
+.settings-card input:focus,
+.settings-card select:focus {
+  border-color: var(--primary);
+}
+
+/* Buttons */
+.btn {
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: #fff;
+}
+
+/* Table */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+.table th,
+.table td {
+  padding: 10px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+.table th {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* Checkbox group */
+.checkbox-group {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+/* Toggle Switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 52px;
+  height: 28px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  inset: 0;
+  background: #cbd5f5;
+  border-radius: 30px;
+  transition: 0.3s;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  bottom: 3px;
+  background: white;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+.switch input:checked + .slider {
+  background: var(--primary);
+}
+
+.switch input:checked + .slider::before {
+  transform: translateX(24px);
+}
+
+/* Small text */
+#themeText {
+  margin-left: 10px;
+  font-weight: 500;
+}
+</style>
+
+
+<script>
+const toggle = document.getElementById("themeToggle");
+const themeText = document.getElementById("themeText");
+
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark");
+  toggle.checked = true;
+  themeText.innerText = "Dark Mode";
+}
+
+toggle.addEventListener("change", () => {
+  if (toggle.checked) {
+    document.body.classList.add("dark");
+    localStorage.setItem("theme", "dark");
+    themeText.innerText = "Dark Mode";
+  } else {
+    document.body.classList.remove("dark");
+    localStorage.setItem("theme", "light");
+    themeText.innerText = "Light Mode";
+  }
+});
+</script>

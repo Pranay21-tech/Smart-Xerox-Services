@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Smart Xerox Services - FAQ & Chatbot</title>
+
+<style>
+
+/* ---------- FAQ MODERN UI ---------- */
+
+body{
+    font-family: 'Segoe UI', sans-serif;
+    background: #f1f5f9;
+}
+
+h2{
+    text-align:center;
+    margin-top:30px;
+    font-weight:600;
+}
+
+.faq-container{
+    width:65%;
+    margin:40px auto;
+}
+
+.faq-item{
+    background:#ffffff;
+    margin-bottom:15px;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    transition:all 0.3s ease;
+}
+
+.faq-item:hover{
+    transform:translateY(-3px);
+}
+
+.faq-question{
+    padding:18px;
+    font-weight:500;   /* reduced bold */
+    font-size:16px;
+    cursor:pointer;
+    position:relative;
+}
+
+.faq-question::after{
+    content:"+";
+    position:absolute;
+    right:20px;
+    font-size:20px;
+    transition:0.3s;
+}
+
+.faq-answer{
+    padding:18px;
+    font-size:14px;
+    color:#555;
+    display:none;
+    border-top:1px solid #eee;
+}
+/* ---------------- CHATBOT ---------------- */
+
+.chatbot-icon{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    background:#007bff;
+    color:#fff;
+    padding:15px;
+    border-radius:50%;
+    cursor:pointer;
+    font-size:20px;
+}
+
+.chatbot-box{
+    position:fixed;
+    bottom:80px;
+    right:20px;
+    width:320px;
+    background:#fff;
+    border-radius:10px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.3);
+    display:none;
+    overflow:hidden;
+}
+
+.chat-header{
+    background:#007bff;
+    color:white;
+    padding:10px;
+    display:flex;
+    justify-content:space-between;
+}
+
+.chat-body{
+    height:250px;
+    padding:10px;
+    overflow-y:auto;
+    font-size:14px;
+}
+
+.chat-input{
+    width:100%;
+    padding:10px;
+    border:none;
+    border-top:1px solid #ccc;
+    outline:none;
+}
+
+.bot{
+    color:#007bff;
+    font-weight:bold;
+}
+
+.user{
+    color:green;
+    font-weight:bold;
+}
+
+</style>
+</head>
+
+<body>
+
+<h2>Frequently Asked Questions</h2>
+
+<div class="faq-container">
+
+<div class="faq-item">
+<div class="faq-question">How do I upload documents?</div>
+<div class="faq-answer">Login → Upload file → Select print options → Make payment.</div>
+</div>
+
+<div class="faq-item">
+<div class="faq-question">What file formats are supported?</div>
+<div class="faq-answer">PDF, DOC, DOCX, JPG, PNG and PPT files.</div>
+</div>
+
+<div class="faq-item">
+<div class="faq-question">Is online payment secure?</div>
+<div class="faq-answer">Yes, we use secure encrypted payment gateways.</div>
+</div>
+
+<div class="faq-item">
+<div class="faq-question">How long does printing take?</div>
+<div class="faq-answer">Most orders are ready within 15–30 minutes.</div>
+</div>
+
+<div class="faq-item">
+<div class="faq-question">Are my documents safe?</div>
+<div class="faq-answer">Yes, files are deleted after printing for privacy.</div>
+</div>
+
+</div>
+
+
+<!-- CHATBOT -->
+
+<div class="chatbot-box" id="chatbox">
+<div class="chat-header">
+<span>Smart Xerox Assistant</span>
+<span style="cursor:pointer;" onclick="toggleChat()">✖</span>
+</div>
+
+<div class="chat-body" id="chatBody">
+<p><span class="bot">Bot:</span> Hello 👋 How can I help you?</p>
+</div>
+
+<input type="text" class="chat-input" id="chatInput"
+placeholder="Type your question..."
+onkeydown="if(event.key==='Enter') sendMessage()">
+
+</div>
+
+<div class="chatbot-icon" onclick="toggleChat()">💬</div>
+
+
+<script>
+
+/* FAQ Toggle */
+document.querySelectorAll(".faq-question").forEach(q=>{
+    q.addEventListener("click", function(){
+        let ans=this.nextElementSibling;
+        ans.style.display= ans.style.display==="block" ? "none":"block";
+    });
+});
+
+/* Chat Toggle */
+function toggleChat(){
+    let box=document.getElementById("chatbox");
+    box.style.display= box.style.display==="block" ? "none":"block";
+}
+
+/* Intelligent Chatbot */
+function sendMessage(){
+
+    let input=document.getElementById("chatInput");
+    let message=input.value.trim();
+    if(message==="") return;
+
+    let chatBody=document.getElementById("chatBody");
+
+    chatBody.innerHTML += `<p><span class="user">You:</span> ${message}</p>`;
+
+    fetch("/chatbot-response/",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json",
+            "X-CSRFToken": getCookie("csrftoken")
+        },
+        body: JSON.stringify({message:message})
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        chatBody.innerHTML += `<p><span class="bot">Bot:</span> ${data.reply}</p>`;
+        chatBody.scrollTop=chatBody.scrollHeight;
+    });
+
+    input.value="";
+}
+
+/* Smart Reply Logic */
+function generateReply(msg){
+
+    if(msg.includes("upload"))
+        return "To upload, go to Upload Page → Select file → Choose print settings → Pay online.";
+
+    if(msg.includes("payment") || msg.includes("pay"))
+        return "We support UPI, Debit Card, Credit Card and Net Banking.";
+
+    if(msg.includes("price") || msg.includes("cost"))
+        return "Printing cost depends on pages and color selection.";
+
+    if(msg.includes("pickup") || msg.includes("collect"))
+        return "After payment, you will receive a pickup code via email.";
+
+    if(msg.includes("time") || msg.includes("hours"))
+        return "We are open from 9 AM to 9 PM.";
+
+    if(msg.includes("safe") || msg.includes("secure"))
+        return "Yes, your documents are secure and deleted after printing.";
+
+    if(msg.includes("hello") || msg.includes("hi"))
+        return "Hello 😊 How can I assist you today?";
+
+    return "Sorry, I didn’t understand that. Please contact support for detailed help.";
+}
+
+</script>
+
+</body>
+</html>

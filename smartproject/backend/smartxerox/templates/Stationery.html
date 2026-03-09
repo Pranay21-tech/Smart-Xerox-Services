@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Smart Xerox Services</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #eef2f6;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Header */
+    .header {
+        background: #1f2937;
+        color: white;
+        padding: 15px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .header span {
+        color: #38bdf8;
+    }
+
+    /* Search */
+    .search-box {
+        max-width: 500px;
+        margin: 25px auto;
+        padding: 0 20px;
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+    }
+
+    /* Container */
+    .container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 20px;
+        max-width: 1100px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        transition: 0.3s;
+    }
+
+    .card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+    }
+
+    .icon {
+        font-size: 46px;
+        margin-bottom: 10px;
+    }
+
+    .label {
+        font-weight: bold;
+        color: #374151;
+    }
+
+    /* Footer */
+    .footer {
+        text-align: center;
+        padding: 15px;
+        background: #1f2937;
+        color: #9ca3af;
+        margin-top: 30px;
+    }
+    .home-btn {
+    background: #38bdf8;
+    color: #1f2937;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.home-btn:hover {
+    background: #0ea5e9;
+    color: white;
+}
+
+</style>
+</head>
+
+<body>
+
+    
+<!-- Header -->
+<div class="header">
+    <h2>🖨️ <span>Smart Xerox</span> Services</h2>
+    <div>Stationery Catalog (View Only)</div>
+    <a href="{% url 'index' %}" class="home-btn">🏠 Home</a>
+</div>
+
+<!-- Search -->
+<div class="search-box">
+    <input type="text" id="searchInput" placeholder="Search stationery items..." onkeyup="searchItems()">
+</div>
+
+<!-- Items -->
+<div class="container">
+
+    <!-- Writing -->
+    <div class="card"><div class="icon">🖊️</div><div class="label">Pen</div></div>
+    <div class="card"><div class="icon">✏️</div><div class="label">Pencil</div></div>
+    <div class="card"><div class="icon">🖍️</div><div class="label">Color Pencil</div></div>
+    <div class="card"><div class="icon">🖊️</div><div class="label">Marker</div></div>
+    <div class="card"><div class="icon">🖍️</div><div class="label">Highlighter</div></div>
+
+    <!-- Paper -->
+    <div class="card"><div class="icon">📒</div><div class="label">Notebook</div></div>
+    <div class="card"><div class="icon">📄</div><div class="label">Notepad</div></div>
+    <div class="card"><div class="icon">📜</div><div class="label">Chart Paper</div></div>
+    <div class="card"><div class="icon">📑</div><div class="label">Sticky Notes</div></div>
+    <div class="card"><div class="icon">📘</div><div class="label">Text Book</div></div>
+
+    <!-- Office Tools -->
+    <div class="card"><div class="icon">📎</div><div class="label">Paper Clip</div></div>
+    <div class="card"><div class="icon">🖇️</div><div class="label">Binder Clip</div></div>
+    <div class="card"><div class="icon">📌</div><div class="label">Push Pin</div></div>
+    <div class="card"><div class="icon">✂️</div><div class="label">Scissors</div></div>
+    <div class="card"><div class="icon">📐</div><div class="label">Sharpener</div></div>
+    <div class="card"><div class="icon">🧽</div><div class="label">Eraser</div></div>
+
+    <!-- Storage -->
+    <div class="card"><div class="icon">🗂️</div><div class="label">File Folder</div></div>
+    <div class="card"><div class="icon">📁</div><div class="label">File</div></div>
+    <div class="card"><div class="icon">📋</div><div class="label">Clipboard</div></div>
+    <div class="card"><div class="icon">🗃️</div><div class="label">Document Box</div></div>
+
+    <!-- Others -->
+    <div class="card"><div class="icon">🧴</div><div class="label">Glue</div></div>
+    <div class="card"><div class="icon">📏</div><div class="label">Ruler</div></div>
+    <div class="card"><div class="icon">🧮</div><div class="label">Calculator</div></div>
+    <div class="card"><div class="icon">📋</div><div class="label">Whiteboard</div></div>
+    <div class="card"><div class="icon">🗒️</div><div class="label">Memo Pad</div></div>
+
+</div>
+
+<!-- Footer -->
+<div class="footer">
+    © 2026 Smart Xerox Services | Frontend View-Only Catalog
+</div>
+
+<script>
+function searchItems() {
+    let input = document.getElementById("searchInput").value.toLowerCase();
+    let cards = document.getElementsByClassName("card");
+
+    for (let i = 0; i < cards.length; i++) {
+        let text = cards[i].innerText.toLowerCase();
+        cards[i].style.display = text.includes(input) ? "block" : "none";
+    }
+}
+</script>
+</body>
+</html>

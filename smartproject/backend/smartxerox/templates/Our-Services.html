@@ -5,91 +5,186 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Our-Services</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #eef2f7, #cfd9df);
+            color: #1f2937;
+        }
+
+        h1 {
+            text-align: center;
+            background: linear-gradient(135deg, #ffffff, #f8fafc);
+            padding: 18px;
+            width: 85%;
+            margin: 35px auto 15px;
+            border-radius: 14px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        h1:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.15);
+        }
+
+        h2 {
+            width: 85%;
+            margin: auto;
+            background: #ffffff;
+            padding: 28px 32px;
+            border-radius: 18px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            line-height: 1.9;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        h2:hover {
+            transform: scale(1.01);
+            box-shadow: 0 14px 35px rgba(0,0,0,0.15);
+        }
+
+        p {
+            margin: 0;
+            font-size: 17.5px;
+        }
+
+        hr {
+            width: 65%;
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #9ca3af, transparent);
+            margin: 45px auto;
+        }
+
+        /* Subtle entrance animation */
+        h1, h2 {
+            animation: fadeUp 0.7s ease both;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1, h2 {
+                width: 92%;
+                padding: 20px;
+            }
+
+            p {
+                font-size: 16px;
+            }
+        }
+    </style>
 </head>
+
 <body>
+
     <h1>🛠️ Our Services – Smart Xerox Service</h1>
     <br>
-    <h2><p>At Smart Xerox Service, we provide a complete suite of online document printing and photocopy solutions, 
+
+    <h2>
+        <p>
+        At Smart Xerox Service, we provide a complete suite of online document printing and photocopy solutions, 
         designed to be fast, user-friendly, and convenient. Whether you're a student, office worker, or business owner,
-         our digital-first services eliminate the need to stand in queues or handle paper manually.</p></h2>
-<br>
-<hr>
-<hr>
-<h1>📋 List of Services We Offer....</h1>
-<br>
-<h2><p>1️⃣ Online Document Upload--
-Upload your files directly from your phone, laptop, or cloud platforms (Google Drive, Dropbox, etc.).
- We support all major file formats like PDF, DOCX, PPT, JPG, and PNG.("BUT WE preffer-Doucment file is PDF...for not loosing the file content")</p>
-<br>
-<p>2️⃣ Custom Printing Options
-Get full control over your printing needs:
+        our digital-first services eliminate the need to stand in queues or handle paper manually.
+        </p>
+    </h2>
 
-Black & White / Color printing
+    <br>
+    <hr>
+    <hr>
 
-Single-sided or Double-sided (duplex)
+    <h1>📋 List of Services We Offer....</h1>
+    <br>
 
-Paper size (A4, A3, Letter, Legal, etc.)
+    <h2>
+        <p>
+        1️⃣ Online Document Upload--<br>
+        Upload your files directly from your phone, laptop, or cloud platforms (Google Drive, Dropbox, etc.).
+        We support all major file formats like PDF, DOCX, PPT, JPG, and PNG.
+        ("BUT WE preffer-Doucment file is PDF...for not loosing the file content")
+        </p><br>
 
-Paper type (plain, glossy, thick)
+        <p>
+        2️⃣ Custom Printing Options<br>
+        Get full control over your printing needs:<br><br>
 
-Number of copies</p><br>
-<p>3️⃣ Instant Cost Estimation
-Get an automatic estimate of your total cost based on your selected options before you place the order—no hidden charges.</p><br>
-<p>4️⃣ Online Payment Gateway
-Make secure and quick payments using:
+        Black & White / Color printing<br>
+        Single-sided or Double-sided (duplex)<br>
+        Paper size (A4, A3, Letter, Legal, etc.)<br>
+        Paper type (plain, glossy, thick)<br>
+        Number of copies
+        </p><br>
 
-UPI (PhonePe, GPay, Paytm)
+        <p>
+        3️⃣ Instant Cost Estimation<br>
+        Get an automatic estimate of your total cost based on your selected options before you place the order—no hidden charges.
+        </p><br>
 
-Debit/Credit Cards
+        <p>
+        4️⃣ Online Payment Gateway<br>
+        Make secure and quick payments using:<br><br>
 
-Wallets and Net Banking
-You’ll receive an invoice and order ID immediately after payment.</p><br>
-<p>5️⃣ Document Safety and Privacy
-Your documents are fully secured:
+        UPI (PhonePe, GPay, Paytm)<br>
+        Debit/Credit Cards<br>
+        Wallets and Net Banking<br>
+        You’ll receive an invoice and order ID immediately after payment.
+        </p><br>
 
-Encrypted uploads
+        <p>
+        5️⃣ Document Safety and Privacy<br>
+        Your documents are fully secured:<br><br>
 
-Temporary storage (auto-deleted after delivery)
+        Encrypted uploads<br>
+        Temporary storage (auto-deleted after delivery)<br>
+        No third-party sharing
+        </p><br>
 
-No third-party sharing</p><br>
-<p> 6️⃣Bulk Printing for Colleges/Offices
-We also offer bulk document printing solutions for:
+        <p>
+        6️⃣ Bulk Printing for Colleges/Offices<br>
+        We also offer bulk document printing solutions for:<br><br>
 
-Exam papers
+        Exam papers<br>
+        College handouts<br>
+        Company brochures<br>
+        Office documentation<br><br>
 
-College handouts
+        With special discounts and support for institutions.
+        </p>
+    </h2>
 
-Company brochures
+    <br>
+    <hr>
+    <hr>
 
-Office documentation
-With special discounts and support for institutions.</p><br>
-</h2><br>
-<br>
-<hr>
-<hr>
-<h1><p>💼 Use Cases</p></h1>
-<br>
-<h2><p>
-📚 Students printing assignments, notes, and reports<br>
+    <h1><p>💼 Use Cases</p></h1>
+    <br>
 
-🧑‍💼 Professionals printing contracts, letters, or resumes<br>
+    <h2>
+        <p>
+        📚 Students printing assignments, notes, and reports<br><br>
+        🧑‍💼 Professionals printing contracts, letters, or resumes<br><br>
+        🏢 Offices needing bulk documentation<br><br>
+        📸 Customers printing photos, flyers, or posters
+        </p>
+    </h2>
 
-🏢 Offices needing bulk documentation<br>
+    <br>
+    <hr>
+    <hr>
 
-📸 Customers printing photos, flyers, or posters</p></h2>
-<br>
-<hr>
-<hr>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
