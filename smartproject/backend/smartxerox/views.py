@@ -346,9 +346,7 @@ Thank you for choosing Smart Xerox Services.
             fail_silently=True,
         )
     except:
-        pass  # Do not crash if email fails
-
-
+        pass  # Do not crash if email fail
     # ✅ Professional WhatsApp Message
     message = f"""
 🖨️ SMART XEROX SERVICES
