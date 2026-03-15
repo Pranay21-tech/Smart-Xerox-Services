@@ -7,7 +7,7 @@ SECRET_KEY = 'django-insecure-8s_a%$bt1l1cx=so9d9@xzvg3u^+si!hp8nwpqf^w+edzmx61&
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["smart-xerox-services.onrender.com"]
 
 
 # ======================
