@@ -20,6 +20,49 @@ integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+
     <title>Smart Xerox Services</title>
   </head>
   <body>
+    <style>
+
+.password-box{
+    position: relative;
+    width: 68%;   /* same width as your email field */
+    margin: 20px auto;
+}
+
+.password-box input{
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid #555;
+    background: transparent;
+    padding: 10px 30px 10px 0;
+    font-size: 15px;
+    outline: none;
+}
+
+.eye-icon{
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #d34b4b;
+    font-size: 16px;
+}
+.password-box{
+    width: 60%;
+    padding: 10px;
+    border: none;
+    border-bottom: 2px solid #555;
+    background: transparent;
+    outline: none;
+}
+
+#eyeIcon{
+    position: relative;
+    left: -30px;
+    cursor: pointer;
+    color: #555;
+}
+</style>
     <header>
        <div class="navbar">
         <div class="nav_logo ">
@@ -61,12 +104,12 @@ integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+
 <br>
 <div class="main1">
 <h2>"Smart Xerox Services offers fast, reliable, and high-quality document printing, 
-  scanning, and copying — all with a modern touch to meet your everyday business needs."</h2>
+  scanning, and copying - all with a modern touch to meet your everyday business needs."</h2>
 </div>
 <br>
 <div class="marquee">
   <span>##OUR MISSION IS TO COMBINE TECHNOLOGY WITH CONVENIENCE,MAKING IT EASIER FOR STUDENTS AND
-   PROFESSIONALS,TO ACCESS RELIABLE DOCUMENT SERVICES — ANYTIME,ANYWHERE.....</span>
+   PROFESSIONALS,TO ACCESS RELIABLE DOCUMENT SERVICES - ANYTIME,ANYWHERE.....</span>
 </div>
 <br>
 <div class="image">
@@ -74,30 +117,38 @@ integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+
 </div>
 <br>
 <br>
-<form id="loginForm">
+<form id="loginForm" method="POST" action="{% url 'login' %}">
+  {% csrf_token %}
   <!-- CSRF token is handled via meta tag and AJAX header, not needed in form for AJAX submission -->
+
   <div class="form">
     <h2>Login Here</h2>
     <input type="email" id="loginEmail" name="email" placeholder="Enter Email..." required>
-    <input type="password" id="loginPassword" name="password" placeholder="Enter Password..." required>
+    <input  class="password-box" type="password" id="loginPassword" name="password" placeholder="Enter Password..." required>
+    <i id="eyeIcon" class="fa-solid fa-eye" onclick="togglePassword()"></i>
 <br>
-    <a href="#">Forgot Password?</a>
+
+    <a href="{% url 'forgot_password' %}">Forgot Password?</a>
+
     <button type="submit" class="button1">Login</button>
 
     <p class="link">
       Don't have an account?
       <a href="{% url 'form' %}">Sign Up</a>
     </p>
-    
+
     <p class="liw">Login with</p>
+
     <div class="google-btn">
-  <a href="{% url 'social:begin' 'google-oauth2' %}">
-    <img src="https://developers.google.com/identity/images/btn_google_signin_dark_normal_web.png"
-         alt="Sign in with Google">
-  </a>
-</div>
+      <a href="{% url 'social:begin' 'google-oauth2' %}">
+        <img src="https://developers.google.com/identity/images/btn_google_signin_dark_normal_web.png"
+             alt="Sign in with Google">
+      </a>
+    </div>
+
   </div>
 </form>
+<br>
   <br><br>
   <hr>
   <hr>
@@ -135,7 +186,7 @@ integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+
     <div class="footer-column">
       <h3>Online Services</h3>
       <ul>
-        <li><a href="#">Pdf printing</a></li>
+        <li><a href="{% url 'pdf_printing' %}">Pdf printing</a></li>
         <li><a href="{% url 'stationery' %}">Stationery items</a></li>
         <li><a href="#">Collage pre-Doucments</a></li>
       </ul>
@@ -150,7 +201,31 @@ integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+
       </div>
     </div>
   </div>
+  <div class="footer-bottom">
+    © 2026 Smart Xerox Services | All Rights Reserved
+  </div>
 </footer>
-</body>
+<script>
+
+function togglePassword(){
+
+    const password = document.getElementById("loginPassword");
+    const icon = document.getElementById("eyeIcon");
+
+    if(password.type === "password"){
+        password.type = "text";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+    }
+    else{
+        password.type = "password";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+    }
+
+}
+
+</script>
 <script src="{% static 'js/script.js' %}"></script>
+</body>
 </html>

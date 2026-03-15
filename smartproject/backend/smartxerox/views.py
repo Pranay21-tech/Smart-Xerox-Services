@@ -12,11 +12,17 @@ import json, uuid, base64, os, random
 import razorpay
 import urllib.parse
 from django.http import JsonResponse
-from .models import FAQ
+from urllib3 import request
+from .models import FAQ, Payment
 import json
 import difflib
-
+from PyPDF2 import PdfReader
+from docx import Document
+from pptx import Presentation
+from .models import UploadDocument
 from .models import Customer, Order, AdminSettings, PrintOrder
+from django.shortcuts import get_object_or_404, redirect
+
 
 
 # ======================================
@@ -58,6 +64,9 @@ def send_to_print_queue(request):
 def Stationery(request):
     return render(request, "Stationery.html")
 
+def pdf_printing(request):
+    return render(request, "pdf_printing.html")
+
 
 # ======================================
 # Signup
@@ -96,16 +105,40 @@ def logout_user(request):
 
 
 def google_callback(request):
-
     email = request.GET.get("email")
 
     if not email:
         return redirect("index")
 
-    request.session.flush()
+    # Clear only old session data if needed
+    request.session.clear()
+
+    # Save user email
     request.session["user_email"] = email
 
     return redirect("main")
+
+
+
+
+def forgot_password(request):
+
+    if request.method == "POST":
+
+        email = request.POST.get("email")
+        new_password = request.POST.get("password")
+
+        user = Customer.objects(email=email).first()
+
+        if not user:
+            return render(request,"forgot_password.html",{"error":"Email not found"})
+
+        user.password = make_password(new_password)
+        user.save()
+
+        return redirect("index")
+
+    return render(request,"forgot_password.html")
 
 # ======================================
 # Login
@@ -148,38 +181,31 @@ def main(request):
     return render(request,"main.html")
 
 
-def admin_login(request):
 
+def admin_login(request):
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")
 
         user = authenticate(request, username=username, password=password)
 
-        if user is not None and user.is_staff:
+        if user and user.is_staff:
             login(request, user)
             return redirect("admin_orders")
 
-        return render(request, "admin_login.html", {
-            "error": "Invalid credentials or not admin"
-        })
+        return render(request, "admin_login.html", {"error": "Invalid credentials"})
 
     return render(request, "admin_login.html")
 
 
-def logout_admin(request):
-    logout(request)
-    return redirect("admin_login")
-
-@login_required(login_url='admin_login')
-@user_passes_test(lambda u: u.is_staff)
 def admin_orders(request):
 
-    orders = Order.objects.order_by("-id")
+    if not request.session.get("admin_logged"):
+        return redirect("admin_login")
 
-    return render(request, "admin_orders.html", {
-        "orders": orders
-    })
+    orders = Order.objects.all()
+    return render(request, "admin_orders.html", {"orders": orders})
+
 
 def logout_admin(request):
     logout(request)
@@ -196,66 +222,98 @@ def create_order(request):
 
     data = json.loads(request.body.decode("utf-8"))
 
-    pages = int(data.get("pages", 1))
+    manual_pages = int(data.get("pages", 0))
     copies = int(data.get("copies", 1))
     print_type = data.get("printType")
     paper_size = data.get("paperSize")
     college_doc = data.get("collegeDoc")
 
-    # Pricing Logic
-    price_per_page = 2
-
-    if print_type == "Colorprint":
-        price_per_page = 5
-
-    if paper_size in ["A3", "Letter", "Legal"]:
-        price_per_page += 2
-
-    if college_doc and college_doc != "none":
-        price_per_page += 5
-    total_price = pages * copies * price_per_page
-    
     file_data = data.get("fileData")
-    file_name = data.get("fileName") 
+    file_name = data.get("fileName")
     file_path = None
 
-    if file_data and ";base64," in file_data:
-        
-     header, encoded = file_data.split(";base64,")
-    file_bytes = base64.b64decode(encoded)
+    pdf_pages = 1
 
-    upload_dir = os.path.join(settings.MEDIA_ROOT, "uploads")
-    os.makedirs(upload_dir, exist_ok=True)
+    # =========================
+    # SAVE FILE
+    # =========================
+    if file_data and file_name:
 
-    ext = file_name.split('.')[-1]
-    safe_name = f"{uuid.uuid4().hex}.{ext}"
-
-    file_path = os.path.join(upload_dir, safe_name)
-
-    with open(file_path, "wb") as f:
-        f.write(file_bytes)
-
-    # Save File
-    file_path = None
-    if data.get("fileData") and data.get("fileName"):
-
-        header, encoded = data["fileData"].split(",", 1)
+        header, encoded = file_data.split(",", 1)
         file_bytes = base64.b64decode(encoded)
 
         upload_dir = os.path.join(settings.MEDIA_ROOT, "uploads")
         os.makedirs(upload_dir, exist_ok=True)
 
-        safe_name = f"{uuid.uuid4().hex}_{data['fileName']}"
+        safe_name = f"{uuid.uuid4().hex}_{file_name}"
         file_path = os.path.join(upload_dir, safe_name)
 
         with open(file_path, "wb") as f:
             f.write(file_bytes)
 
+        # =========================
+        # DOCUMENT PAGE DETECTION
+        # =========================
+        try:
+
+            ext = file_name.split(".")[-1].lower()
+
+            if ext == "pdf":
+                reader = PdfReader(file_path)
+                pdf_pages = len(reader.pages)
+
+            elif ext in ["doc", "docx"]:
+                doc = Document(file_path)
+                pdf_pages = len(doc.paragraphs) // 40 + 1
+
+            elif ext in ["ppt", "pptx"]:
+                prs = Presentation(file_path)
+                pdf_pages = len(prs.slides)
+
+            elif ext in ["jpg", "jpeg", "png"]:
+                pdf_pages = 1
+            
+             # 🔥 Important fix
+            if pages <= 0:
+                pages = 1
+
+        except Exception as e:
+            print("Document page detection error:", e)
+
+# =========================
+# TOTAL PAGE CALCULATION
+# =========================
+    pdf_pages = max(pdf_pages, 1)
+    manual_pages = max(manual_pages, 0)
+    total_pages = pdf_pages + manual_pages
+
+    # =========================
+    # PRICING LOGIC
+    # =========================
+    price_per_page = 5
+
+    if print_type == "Colorprint":
+        price_per_page = 5
+
+    paper_extra = 0
+    if paper_size in ["A3", "Letter", "Legal"]:
+        paper_extra = 2
+
+    college_fee = 0
+    if college_doc and college_doc != "none":
+        college_fee = 5
+
+    printing_cost = total_pages * copies * (price_per_page + paper_extra)
+    total_price = printing_cost + college_fee
+
+    # =========================
+    # CREATE ORDER
+    # =========================
     order = Order.objects.create(
         user_email=request.session["user_email"],
         file_path=file_path,
         print_type=print_type,
-        pages=pages,
+        pages=pdf_pages,
         copies=copies,
         total_price=total_price,
         pickup_code=str(random.randint(1000, 9999)),
@@ -263,12 +321,11 @@ def create_order(request):
     )
 
     return JsonResponse({
-    "status": "success",
-    "order_id": order.order_id,
-    "amount": total_price * 100
-})
-
-
+        "status": "success",
+        "order_id": order.order_id,
+        "amount": total_price,
+        "pages": pdf_pages
+    })
 # ======================================
 # Razorpay Order
 # ======================================
@@ -300,31 +357,66 @@ import urllib.parse
 import random
 
 
+import os
+import random
+import urllib.parse
+from django.utils import timezone
+
+
+@login_required
 def payment_success(request):
+
     order_id = request.GET.get("order_id")
     payment_id = request.GET.get("payment_id")
-    
-    
 
     if not order_id:
         return redirect("main")
 
-    # Get order using custom order_id (ORD-XXXX)
+    # Get MongoDB order
     order = Order.objects(order_id=order_id).first()
 
     if not order:
         return redirect("main")
 
-    # ✅ Update payment status
+    # Update payment status
     order.payment_status = "Paid"
 
-    # ✅ Generate pickup code ONLY if not already generated
     if not order.pickup_code:
         order.pickup_code = str(random.randint(1000, 9999))
 
     order.save()
 
-    # ✅ Send Email
+    # -----------------------------
+    # Extract file name
+    # -----------------------------
+    file_name = os.path.basename(order.file_path) if order.file_path else "No File"
+
+    # -----------------------------
+    # Convert to MEDIA relative path
+    # -----------------------------
+    relative_file = None
+
+    if order.file_path:
+        relative_file = "uploads/" + file_name
+
+    # -----------------------------
+    # Save order history
+    # -----------------------------
+    UploadDocument.objects.create(
+        user=request.user,
+        file=relative_file,      # correct FileField path
+        file_name=file_name,
+        pages=order.pages,
+        copies=order.copies,
+        print_type=order.print_type,
+        status="pending",
+        payment_status="paid",
+        created_at=timezone.now()
+    )
+
+    # -----------------------------
+    # Send Email
+    # -----------------------------
     try:
         send_mail(
             subject="Smart Xerox Services - Payment Successful",
@@ -337,17 +429,17 @@ Order ID: {order.order_id}
 Pickup Code: {order.pickup_code}
 
 Please show this pickup code while collecting your documents.
-
-Thank you for choosing Smart Xerox Services.
 """,
             from_email=settings.EMAIL_HOST_USER,
-            # recipient_list=["shekapurampranay@gmail.com"],
             recipient_list=[order.user_email],
-            fail_silently=True,
+            fail_silently=False,
         )
-    except:
-        pass  # Do not crash if email fail
-    # ✅ Professional WhatsApp Message
+    except Exception as e:
+        print("Email error:", e)
+
+    # -----------------------------
+    # WhatsApp Message
+    # -----------------------------
     message = f"""
 🖨️ SMART XEROX SERVICES
 ━━━━━━━━━━━━━━━
@@ -356,17 +448,12 @@ Thank you for choosing Smart Xerox Services.
 
 🆔 Order ID : {order.order_id}
 🔐 Pickup Code : {order.pickup_code}
-
-⚠ Please keep this code safe.
-Required during document collection.
-
-Thank you for trusting Smart Xerox!
 """
 
     encoded_message = urllib.parse.quote(message)
+
     whatsapp_url = f"https://wa.me/?text={encoded_message}"
 
-    # ✅ Return Success Page
     return render(request, "payment_success.html", {
         "order_id": order.order_id,
         "payment_id": payment_id,
@@ -379,8 +466,13 @@ def payment_page(request):
     amount = request.GET.get("amount", "0")
     order_id = request.GET.get("order_id", "")
 
+    pdf_pages = int(request.GET.get("pdf_pages", 1))
+    if pdf_pages < 1:
+        pdf_pages = 1
+
     return render(request, "payment_page.html", {
         "amount": amount,
+        "pdf_pages": pdf_pages,
         "order_id": order_id,
         "razorpay_key_id": settings.RAZORPAY_KEY_ID
     })
@@ -605,3 +697,116 @@ def chatbot_response(request):
     return JsonResponse({
         "reply": "Invalid request method."
     })
+
+@login_required
+def profile(request):
+
+    # SAVE NEW ORDER FIRST
+    if request.method == "POST":
+
+        uploaded_file = request.FILES.get("file")
+        pages = request.POST.get("pages")
+        copies = request.POST.get("copies")
+        print_type = request.POST.get("print_type")
+
+        if uploaded_file:
+
+            UploadDocument.objects.create(
+                user=request.user,
+                file=uploaded_file,
+                file_name=uploaded_file.name,
+                pages=int(pages),
+                copies=int(copies),
+                print_type=print_type,
+                status="pending",
+                payment_status="paid"
+            )
+
+        return redirect("profile")   # reload page after saving
+
+
+    # FETCH DATA AFTER SAVING
+    uploads = UploadDocument.objects.filter(user=request.user).order_by("-created_at")
+
+    total_docs = uploads.count()
+    total_pages = sum(doc.pages * doc.copies for doc in uploads)
+    total_orders = uploads.count()
+
+    notifications = []
+
+    for doc in uploads:
+
+        if doc.payment_status.lower() == "paid":
+            notifications.append(f"Payment successful for {os.path.basename(doc.file_name)}")
+
+        if doc.status.lower() == "printing":
+            notifications.append(f"{doc.file_name} is currently printing")
+
+        if doc.status.lower() == "completed":
+            notifications.append(f"{doc.file_name} is ready for pickup")
+
+
+    context = {
+        "uploads": uploads,
+        "total_docs": total_docs,
+        "total_pages": total_pages,
+        "total_orders": total_orders,
+        "notifications": notifications
+    }
+
+    return render(request, "profile.html", context)
+
+@login_required
+def delete_order(request, id):
+
+    order = get_object_or_404(UploadDocument, id=id, user=request.user)
+
+    if request.method == "POST":
+        order.delete()
+
+    return redirect("profile")
+
+def save_payment(request):
+
+    if request.method == "POST":
+
+        file_name = request.POST.get("file")
+        pages = request.POST.get("pages")
+        amount = request.POST.get("amount")
+
+        order_id = "ORD" + str(uuid.uuid4().hex[:6])
+
+        Payment.objects.create(
+            user=request.user,
+            order_id=order_id,
+            file_name=file_name,
+            pages=pages,
+            amount=amount,
+            status="Paid"
+        )
+
+        return redirect("/payment-history")
+
+@login_required
+def payment_history(request):
+
+    payments = Payment.objects.filter(user=request.user).order_by("-date")
+
+    return render(request, "payment_history.html", {
+        "payments": payments
+    })
+
+@login_required
+def update_order_status(request, id):
+
+    order = get_object_or_404(UploadDocument, id=id, user=request.user)
+
+    if request.method == "POST":
+
+        new_status = request.POST.get("status")
+
+        if new_status:
+            order.status = new_status
+            order.save()
+
+    return redirect("profile")

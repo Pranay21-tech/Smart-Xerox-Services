@@ -14,6 +14,29 @@ integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+
     <title>Smart Xerox Services-SignUp page</title>
 </head>
 <body>
+    <style>
+.password-field{
+    position: relative;
+    width: 100%;
+}
+
+.password-field input{
+    width:100%;
+    padding:12px 40px 12px 12px;   /* left padding added */
+    border:1px solid #ccc;
+    border-radius:8px;
+    box-sizing:border-box;
+}
+
+.eye-icon{
+    position:absolute;
+    right:12px;
+    top:50%;
+    transform:translateY(-50%);
+    cursor:pointer;
+    color:#c4001d;
+}
+</style>  
 <div class="form-center-container">
 <!-- ...existing header/navbar code... -->
 <header>
@@ -56,15 +79,22 @@ integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+
                         <hr>
                         <hr>
                         <br><br>
-                    <form id="signupForm">
+                    <form id="signupForm" method="POST">
                             <!-- CSRF token is handled via meta tag and AJAX header, not needed in form for AJAX submission -->
                             <div class="form">
                                 <h2>Sign Up Here</h2>
                                 <input type="text" id="firstName" name="firstname" placeholder="First Name" required>
                                 <input type="text" id="lastName" name="lastname" placeholder="Last Name" required>
                                 <input type="email" id="signEmail" name="email" placeholder="Enter Email..." required>
-                                <input type="password" id="signPassword" name="password" placeholder="Password" required>
-                                <input type="password" id="signConfirmPassword" name="confirm_password" placeholder="Confirm Password" required>
+                               <div class="password-field">
+<input type="password" id="signPassword" name="password" placeholder="Password" required>
+<i class="fa-solid fa-eye eye-icon" onclick="togglePassword('signPassword', this)"></i>
+</div>
+
+<div class="password-field">
+<input type="password" id="signConfirmPassword" name="confirm_password" placeholder="Confirm Password" required>
+<i class="fa-solid fa-eye eye-icon" onclick="togglePassword('signConfirmPassword', this)"></i>
+</div>
                                 <button type="submit" class="button1">Sign Up</button>
                                 <br><br>
                                 <p class="link">
@@ -81,6 +111,37 @@ integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+
                             </div>
                         </form>
                     </div>
+<script>
+
+function togglePassword(id, icon){
+
+    const input = document.getElementById(id);
+
+    if(input.type === "password"){
+        input.type = "text";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+    }else{
+        input.type = "password";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+    }
+
+}
+
+document.querySelector("#signupForm").onsubmit = function(){
+
+let p1 = document.getElementById("signPassword").value;
+let p2 = document.getElementById("signConfirmPassword").value;
+
+if(p1 !== p2){
+alert("Passwords do not match");
+return false;
+}
+
+}
+
+</script> 
+<script src="{% static 'js/script.js' %}"></script>              
 </body>
-<script src="{% static 'js/script.js' %}"></script>
 </html>

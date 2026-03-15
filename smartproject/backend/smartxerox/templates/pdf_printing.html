@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF Printing Services</title>
+
+<style>
+
+/* Page background */
+body{
+    font-family: Arial, sans-serif;
+    background:#f5f5f5;
+    margin:0;
+    padding:0;
+}
+
+/* Section title */
+.section-title{
+    text-align:center;
+    padding:40px 0 20px;
+}
+
+.section-title h2{
+    color:#e60023;
+    font-size:32px;
+}
+
+/* Grid container */
+.services-container{
+    width:90%;
+    max-width:1100px;
+    margin:auto;
+    display:grid;
+    grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
+    gap:20px;
+    padding-bottom:50px;
+}
+
+/* Service cards */
+.service-card{
+    background:white;
+    padding:25px;
+    text-align:center;
+    border-radius:10px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+    transition:0.3s;
+    cursor:pointer;
+}
+
+.service-card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 8px 20px rgba(0,0,0,0.2);
+}
+
+/* Icon style */
+.service-icon{
+    font-size:40px;
+    color:#e60023;
+    margin-bottom:10px;
+}
+
+.service-card h3{
+    font-size:18px;
+}
+
+/* Button */
+.print-btn{
+    display:block;
+    margin:40px auto;
+    padding:12px 30px;
+    background:#e60023;
+    color:white;
+    border:none;
+    border-radius:6px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+.print-btn:hover{
+    background:#c4001d;
+}
+.back-btn{
+    position:absolute;
+    top:20px;
+    right:20px;
+    padding:8px 16px;
+    background:#e60023;
+    color:white;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:14px;
+}
+
+.back-btn:hover{
+    background:#c4001d;
+}
+
+</style>
+
+<!-- FontAwesome icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+</head>
+<body>
+
+
+<div class="section-title">
+<h2>PDF Printing Services</h2>
+<p>Select the type of printing service you need</p>
+</div>
+
+
+<div class="services-container">
+
+<div class="service-card" onclick="selectService('Black & White Printing')">
+<i class="fa-solid fa-print service-icon"></i>
+<h3>Black & White Printing</h3>
+</div>
+
+<div class="service-card" onclick="selectService('Color Printing')">
+<i class="fa-solid fa-palette service-icon"></i>
+<h3>Color Printing</h3>
+</div>
+
+<div class="service-card" onclick="selectService('Single-Sided Printing')">
+<i class="fa-solid fa-file service-icon"></i>
+<h3>Single-Sided Printing</h3>
+</div>
+
+<div class="service-card" onclick="selectService('Double-Sided Printing')">
+<i class="fa-solid fa-copy service-icon"></i>
+<h3>Double-Sided Printing</h3>
+</div>
+
+<div class="service-card" onclick="selectService('Project Report Printing')">
+<i class="fa-solid fa-book service-icon"></i>
+<h3>Project Report</h3>
+</div>
+
+<div class="service-card" onclick="selectService('Resume Printing')">
+<i class="fa-solid fa-file-lines service-icon"></i>
+<h3>Resume Printing</h3>
+</div>
+
+<div class="service-card" onclick="selectService('Spiral Binding')">
+<i class="fa-solid fa-link service-icon"></i>
+<h3>Spiral Binding</h3>
+</div>
+
+
+</div>
+
+
+<button class="print-btn" onclick="goToUpload()">Upload PDF for Printing</button>
+<button class="back-btn" onclick="goBack()">
+<i class="fa-solid fa-arrow-left"></i> Back
+</button>
+
+
+<script>
+
+/* When a service is clicked */
+function selectService(service){
+    alert("You selected: " + service);
+}
+
+/* Upload button */
+function goToUpload(){
+    alert("Redirecting to Upload Page...");
+    // Example:
+    // window.location.href="/upload";
+}
+function goBack(){
+    window.history.back();
+}
+
+</script>
+
+
+</body>
+</html>

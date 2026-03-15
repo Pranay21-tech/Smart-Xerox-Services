@@ -45,11 +45,11 @@ body {
 
 .form input {
     width: 100%;
-    padding: 0.75rem;
-    margin-bottom: 1rem;
+    padding: 0.6rem;       /* reduced from 0.75rem */
+    margin-bottom: 0.8rem; /* reduced spacing */
     border: 1px solid #bbb;
     border-radius: 6px;
-    font-size: 1rem;
+    font-size: 0.95rem;    /* slightly smaller text */
     transition: border-color 0.2s;
 }
 
@@ -155,3 +155,4 @@ body {
 .button:hover {
     background: linear-gradient(135deg, #6b46c1, #3182ce);
 }
+
