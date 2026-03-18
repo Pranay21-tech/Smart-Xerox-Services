@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>College Pre-Documents</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #f4f6f9;
+  margin: 0;
+  padding: 0;
+}
+
+/* Container */
+.container {
+  width: 85%;
+  margin: auto;
+  margin-top: 40px;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.header p {
+  color: #666;
+  font-size: 14px;
+}
+
+/* Cards */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  background: #2563eb;
+  color: white;
+}
+
+.card i {
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+
+.card h3 {
+  margin: 10px 0 5px;
+  font-size: 16px;
+}
+
+.card p {
+  font-size: 12px;
+  color: #777;
+}
+
+.card:hover p {
+  color: #ddd;
+}
+
+/* Checkbox Section */
+.option-box {
+  margin-top: 30px;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.option-box label {
+  font-weight: 600;
+}
+
+.option-box input {
+  margin-right: 8px;
+}
+
+/* Button */
+.btn {
+  margin-top: 20px;
+  padding: 10px 20px;
+  border: none;
+  background: #2563eb;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: #1e40af;
+}
+
+.input-box {
+  display: flex;
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.counter {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.controls button {
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: #2563eb;
+  color: white;
+  font-size: 18px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.controls input {
+  width: 50px;
+  text-align: center;
+  border: none;
+  font-size: 16px;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.back-btn {
+  text-decoration: none;
+  background: #2563eb;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+.back-btn:hover {
+  background: #1e40af;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <h1>🎓 College Pre-Documents</h1>
+    <p>Select your document type for better printing service</p>
+    <a href="{% url 'main' %}" class="back-btn">
+    ← Back
+  </a>
+  </div>
+
+
+  
+  <!-- Cards -->
+
+  <div class="cards">
+  
+```
+<div class="card" onclick="selectDoc('leave')">
+  <i>📝</i>
+  <h3>Leave Letter</h3>
+  <p>Formal leave applications</p>
+</div>
+
+<div class="card" onclick="selectDoc('undertaking')">
+  <i>📑</i>
+  <h3>Undertaking</h3>
+  <p>Declarations & forms</p>
+</div>
+
+<div class="card" onclick="selectDoc('watermark')">
+  <i>💧</i>
+  <h3>Watermark Page</h3>
+  <p>College watermark prints</p>
+</div>
+<div class="card" onclick="selectDoc()">
+  <i>📘</i>
+  <h3>Assignment</h3>
+  <p>Print assignments neatly</p>
+</div>
+
+
+<div class="card" onclick="selectDoc()">
+  <i>📜</i>
+  <h3>Bonafide</h3>
+  <p>Certificates & letters</p>
+</div>
+
+<div class="price-box">
+  <h3>💰 Price Details</h3>
+
+  <p>Pages: <span id="pagesCount">1</span></p>
+  <p>Copies: <span id="copiesCount">1</span></p>
+  <p>Price per page: ₹<span id="pricePerPage">5</span></p>
+
+  <p id="collegeFeeRow" style="display:none;">
+    College Document Fee: ₹5
+  </p>
+
+  <hr>
+
+  <h2>Total: ₹<span id="totalPrice">5</span></h2>
+</div>
+```
+
+  </div>
+
+  <!-- Option -->
+
+  <div class="option-box">
+    <label>
+      <input type="checkbox" id="collegeDoc" name="collegeDoc">
+      Add College Document Handling (+₹5 extra)
+    </label>
+  </div>
+<div class="input-box">
+
+  <!-- Pages -->
+  <div class="counter">
+    <label>📄 Number of Pages</label>
+    <div class="controls">
+      <button onclick="changePages(-1)">-</button>
+      <input type="number" id="pagesInput" value="1" min="1" readonly>
+      <button onclick="changePages(1)">+</button>
+    </div>
+  </div>
+
+  <!-- Copies -->
+  <div class="counter">
+    <label>🖨 Copies</label>
+    <div class="controls">
+      <button onclick="changeCopies(-1)">-</button>
+      <input type="number" id="copiesInput" value="1" min="1" readonly>
+      <button onclick="changeCopies(1)">+</button>
+    </div>
+  </div>
+
+</div>
+  <!-- Button -->
+
+<button class="btn" onclick="goToUpload()">Continue to Upload</button>
+
+</div>
+
+<script>
+function selectDoc() {
+  document.getElementById("collegeDoc").checked = true;
+}
+
+function goToUpload() {
+  alert("Redirect to upload page (connect this with your main flow)");
+}
+
+function selectDoc(type) {
+
+    document.getElementById("collegeDoc").checked = true;
+    document.getElementById("docType").value = type;
+
+    // highlight selected
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+}
+
+let selectedDoc = "none";
+
+function selectDoc(type) {
+
+    selectedDoc = type;
+
+    document.getElementById("collegeDoc").checked = true;
+    document.getElementById("docType").value = type;
+
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+
+    updatePrice();
+}
+
+function updatePrice() {
+
+    let pages = parseInt(document.getElementById("pagesInput").value) || 1;
+    let copies = parseInt(document.getElementById("copiesInput").value) || 1;
+
+    let pricePerPage = 5;
+    let collegeFee = 0;
+
+    let isCollege = document.getElementById("collegeDoc").checked;
+
+    if (isCollege) {
+        collegeFee = 5;
+        document.getElementById("collegeFeeRow").style.display = "block";
+    } else {
+        document.getElementById("collegeFeeRow").style.display = "none";
+    }
+
+    let total = (pages * copies * pricePerPage) + collegeFee;
+
+    // Update UI
+    document.getElementById("pagesCount").innerText = pages;
+    document.getElementById("copiesCount").innerText = copies;
+    document.getElementById("pricePerPage").innerText = pricePerPage;
+    document.getElementById("totalPrice").innerText = total;
+}
+
+// Auto update on input change
+document.getElementById("pagesInput").addEventListener("input", updatePrice);
+document.getElementById("copiesInput").addEventListener("input", updatePrice);
+document.getElementById("collegeDoc").addEventListener("change", updatePrice);
+
+// Initial call
+updatePrice();
+
+function changePages(value) {
+    let input = document.getElementById("pagesInput");
+    let current = parseInt(input.value);
+
+    current += value;
+
+    if (current < 1) current = 1;
+
+    input.value = current;
+    updatePrice();
+}
+
+function changeCopies(value) {
+    let input = document.getElementById("copiesInput");
+    let current = parseInt(input.value);
+
+    current += value;
+
+    if (current < 1) current = 1;
+
+    input.value = current;
+    updatePrice();
+}
+</script>
+
+</body>
+</html>

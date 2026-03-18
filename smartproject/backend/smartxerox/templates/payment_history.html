@@ -143,9 +143,9 @@ color:#777;
 <td>{{ payment.date }}</td>
 
 <td>
-<button class="btn receipt-btn">
-<i class="fa fa-download"></i> Download
-</button>
+<a href="{% url 'download_receipt' payment.order_id %}" class="btn btn-success">
+    ⬇ Download
+</a>
 </td>
 
 </tr>

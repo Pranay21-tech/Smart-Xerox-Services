@@ -1,8 +1,8 @@
 from django.conf import settings
 from django.urls import path, include
-import static
-from . import views
 from django.conf.urls.static import static
+from . import views
+
 
 
 urlpatterns = [
@@ -34,15 +34,19 @@ urlpatterns = [
     # =========================
     # Admin Area
     # =========================
-path('admin-login/', views.admin_login, name='admin_login'),
-path('admin_orders/', views.admin_orders, name='admin_orders'),
-path("logout-admin/", views.logout_admin, name="logout_admin"),
-path("settings/", views.admin_settings_view, name="admin_settings"),
-path("print-queue/", views.printQueue_admin, name="printQueue_admin"),
-path("send-to-print/", views.send_to_print_queue, name="send_to_print_queue"),
-path("print-file/<str:order_id>/", views.open_print_file, name="open_print_file"),
-path('profile/', views.profile, name='profile'),
-path("delete-order/<int:id>/", views.delete_order, name="delete_order"),
+    path('admin-login/', views.admin_login, name='admin_login'),
+    path('admin_orders/', views.admin_orders, name='admin_orders'),
+    path("logout-admin/", views.logout_admin, name="logout_admin"),
+    path("settings/", views.admin_settings_view, name="admin_settings"),
+    path("print-queue/", views.printQueue_admin, name="printQueue_admin"),
+    path("send-to-print/", views.send_to_print_queue, name="send_to_print_queue"),
+    path("print-file/<str:order_id>/", views.open_print_file, name="open_print_file"),
+    path('profile/', views.profile, name='profile'),
+    path("delete-order/<int:id>/", views.delete_order, name="delete_order"),
+    path("start-print/<int:id>/", views.start_print, name="start_print"),
+    path("pause-print/<int:id>/", views.pause_print, name="pause_print"),
+    path("delete-print/<int:id>/", views.delete_print, name="delete_print"),
+    path("college-documents/", views.college_documents, name="college_documents"),
 
 
     # =========================
@@ -58,6 +62,7 @@ path("delete-order/<int:id>/", views.delete_order, name="delete_order"),
     path("api/create-order/", views.create_razorpay_order, name="create_razorpay_order"),
     path("payment-history/", views.payment_history, name="payment_history"),
     path("update-status/<int:id>/", views.update_order_status, name="update_status"),
+    path("download-receipt/<str:order_id>/", views.download_receipt, name="download_receipt"),
 
 
 # =========================

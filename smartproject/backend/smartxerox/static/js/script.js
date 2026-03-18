@@ -256,12 +256,13 @@ function startPayment() {
     "name": "Smart Xerox Services",
     "description": "Document Print Payment",
 
-    "handler": function (response) {
+   handler: function (response) {
 
-      window.location.href =
-      `/payment/success/?order_id=${order_id}&payment_id=${response.razorpay_payment_id}&phone=${phone}`;
+    const orderId = document.getElementById("order_id").value;
 
-    },
+    // ✅ Direct redirect (NO DELAY)
+    window.location.href = `/payment-success?order_id=${orderId}&payment_id=${response.razorpay_payment_id}`;
+},
 
     "prefill": {
       "name": name,

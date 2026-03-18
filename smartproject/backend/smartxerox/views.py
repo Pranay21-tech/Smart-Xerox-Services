@@ -67,6 +67,9 @@ def Stationery(request):
 def pdf_printing(request):
     return render(request, "pdf_printing.html")
 
+def college_documents(request):
+    return render(request, "college_documents.html")
+
 
 # ======================================
 # Signup
@@ -353,15 +356,7 @@ def create_razorpay_order(request):
 # ======================================
 # Payment Success
 # ======================================
-import urllib.parse
-import random
-
-
-import os
-import random
-import urllib.parse
 from django.utils import timezone
-
 
 @login_required
 def payment_success(request):
@@ -372,13 +367,12 @@ def payment_success(request):
     if not order_id:
         return redirect("main")
 
-    # Get MongoDB order
     order = Order.objects(order_id=order_id).first()
 
     if not order:
         return redirect("main")
 
-    # Update payment status
+    # Update payment
     order.payment_status = "Paid"
 
     if not order.pickup_code:
@@ -386,25 +380,19 @@ def payment_success(request):
 
     order.save()
 
-    # -----------------------------
-    # Extract file name
-    # -----------------------------
+    # File name
     file_name = os.path.basename(order.file_path) if order.file_path else "No File"
 
-    # -----------------------------
-    # Convert to MEDIA relative path
-    # -----------------------------
     relative_file = None
-
     if order.file_path:
         relative_file = "uploads/" + file_name
 
     # -----------------------------
-    # Save order history
+    # SAVE ORDER HISTORY
     # -----------------------------
     UploadDocument.objects.create(
         user=request.user,
-        file=relative_file,      # correct FileField path
+        file=relative_file,
         file_name=file_name,
         pages=order.pages,
         copies=order.copies,
@@ -415,8 +403,18 @@ def payment_success(request):
     )
 
     # -----------------------------
-    # Send Email
+    # ✅ SAVE PAYMENT HISTORY (FIX)
     # -----------------------------
+    Payment.objects.create(
+        user=request.user,
+        order_id=order.order_id,
+        file_name=file_name,
+        pages=order.pages,
+        amount=order.total_price,
+        status="Paid"
+    )
+
+    # Email
     try:
         send_mail(
             subject="Smart Xerox Services - Payment Successful",
@@ -427,8 +425,6 @@ Payment Confirmed ✅
 
 Order ID: {order.order_id}
 Pickup Code: {order.pickup_code}
-
-Please show this pickup code while collecting your documents.
 """,
             from_email=settings.EMAIL_HOST_USER,
             recipient_list=[order.user_email],
@@ -437,9 +433,7 @@ Please show this pickup code while collecting your documents.
     except Exception as e:
         print("Email error:", e)
 
-    # -----------------------------
-    # WhatsApp Message
-    # -----------------------------
+    # WhatsApp
     message = f"""
 🖨️ SMART XEROX SERVICES
 ━━━━━━━━━━━━━━━
@@ -450,9 +444,7 @@ Please show this pickup code while collecting your documents.
 🔐 Pickup Code : {order.pickup_code}
 """
 
-    encoded_message = urllib.parse.quote(message)
-
-    whatsapp_url = f"https://wa.me/?text={encoded_message}"
+    whatsapp_url = f"https://wa.me/?text={urllib.parse.quote(message)}"
 
     return render(request, "payment_success.html", {
         "order_id": order.order_id,
@@ -547,9 +539,7 @@ def printQueue_admin(request):
     })
 
 
-
-from django.http import FileResponse, Http404
-import os
+import mimetypes
 
 @login_required(login_url='admin_login')
 @user_passes_test(lambda u: u.is_staff)
@@ -563,23 +553,30 @@ def open_print_file(request, order_id):
     if not order.file_path:
         raise Http404("File not uploaded")
 
-    if not os.path.exists(order.file_path):
-        raise Http404("File not found")
+    file_path = order.file_path
 
-    # ✅ Custom filename for printing
-    filename = f"Order_{order.order_id}_{order.user_email}.pdf"
+    # ✅ Fix path
+    if not os.path.isabs(file_path):
+        file_path = os.path.join(settings.MEDIA_ROOT, file_path)
 
-    response = FileResponse(
-        open(order.file_path, "rb"),
-        content_type="application/pdf"
+    if not os.path.exists(file_path):
+        raise Http404(f"File not found: {file_path}")
+
+    # ✅ Detect file type automatically
+    content_type, _ = mimetypes.guess_type(file_path)
+
+    if not content_type:
+        content_type = 'application/octet-stream'
+
+    filename = os.path.basename(file_path)
+
+    return FileResponse(
+        open(file_path, "rb"),
+        content_type=content_type,
+        headers={
+            "Content-Disposition": f'inline; filename="{filename}"'
+        }
     )
-
-    response["Content-Disposition"] = f'inline; filename="{filename}"'
-
-    return response
-
-
-
 
 
 from django.core.mail import send_mail
@@ -790,7 +787,17 @@ def save_payment(request):
 @login_required
 def payment_history(request):
 
-    payments = Payment.objects.filter(user=request.user).order_by("-date")
+    # ✅ Admin can see all
+    if request.user.is_staff:
+        payments = Payment.objects.all().order_by("-date")
+
+    else:
+        # ✅ Session-based user fix
+        user_email = request.session.get("user_email")
+
+        payments = Payment.objects.filter(
+            user__email=user_email
+        ).order_by("-date")
 
     return render(request, "payment_history.html", {
         "payments": payments
@@ -810,3 +817,78 @@ def update_order_status(request, id):
             order.save()
 
     return redirect("profile")
+
+from django.http import HttpResponse
+from reportlab.pdfgen import canvas
+from io import BytesIO
+
+@login_required
+def download_receipt(request, order_id):
+
+    payment = Payment.objects.filter(order_id=order_id).first()
+
+    if not payment:
+        return HttpResponse("Receipt not found")
+
+    buffer = BytesIO()
+
+    p = canvas.Canvas(buffer)
+
+    # Title
+    p.setFont("Helvetica-Bold", 16)
+    p.drawString(200, 800, "Payment Receipt")
+
+    # Content
+    p.setFont("Helvetica", 12)
+    p.drawString(50, 750, f"Order ID: {payment.order_id}")
+    p.drawString(50, 720, f"File Name: {payment.file_name}")
+    p.drawString(50, 690, f"Pages: {payment.pages}")
+    p.drawString(50, 660, f"Amount: ₹{payment.amount}")
+    p.drawString(50, 630, f"Status: {payment.status}")
+    p.drawString(50, 600, f"Date: {payment.date}")
+
+    p.drawString(50, 550, "Thank you for using Smart Xerox Services!")
+
+    p.showPage()
+    p.save()
+
+    buffer.seek(0)
+
+    return HttpResponse(buffer, content_type='application/pdf', headers={
+        'Content-Disposition': f'attachment; filename=receipt_{order_id}.pdf'
+    })
+
+@login_required(login_url='admin_login')
+@user_passes_test(lambda u: u.is_staff)
+def start_print(request, id):
+    order = get_object_or_404(PrintOrder, id=id)
+    order.status = "printing"
+    order.save()
+    return redirect("printQueue_admin")
+
+
+@login_required(login_url='admin_login')
+@user_passes_test(lambda u: u.is_staff)
+def pause_print(request, id):
+    order = get_object_or_404(PrintOrder, id=id)
+    order.status = "paused"
+    order.save()
+    return redirect("printQueue_admin")
+
+
+@login_required(login_url='admin_login')
+@user_passes_test(lambda u: u.is_staff)
+def delete_print(request, id):
+    order = get_object_or_404(PrintOrder, id=id)
+    order.delete()
+    return redirect("printQueue_admin")
+
+
+@login_required(login_url='admin_login')
+@user_passes_test(lambda u: u.is_staff)
+def college_documents(request):
+
+    if "user_email" not in request.session:
+        return redirect("index")
+
+    return render(request, "college_documents.html")

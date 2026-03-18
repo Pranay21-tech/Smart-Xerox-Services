@@ -1,10 +1,12 @@
 <!DOCTYPE html>
+
 <html>
 <head>
   <title>Print Queue</title>
 </head>
 
 <body>
+
 <div class="queue-header">
   <h1>🖨️ Print Queue</h1>
   <a href="{% url 'admin_orders' %}" class="btn btn-secondary back-btn">
@@ -24,7 +26,8 @@
     <th>Actions</th>
   </tr>
 
-  {% for order in orders %}
+{% for order in orders %}
+
   <tr>
     <td>{{ order.order_id }}</td>
     <td>{{ order.customer_name }}</td>
@@ -33,28 +36,49 @@
     <td>{{ order.print_type }}</td>
     <td>{{ order.copies }}</td>
 
-    <td>
-      {% if order.status == "waiting" %}
-        <span class="status waiting">🟢 Ready</span>
-      {% elif order.status == "printing" %}
-        <span class="status printing">🟡 Printing</span>
-      {% elif order.status == "done" %}
-        <span class="status done">✅ Done</span>
-      {% else %}
-        <span class="status error">🔴 Error</span>
-      {% endif %}
-    </td>
+```
+<td id="status-{{ order.id }}">
+  {% if order.status == "waiting" %}
+    <span class="status waiting">🟢 Ready</span>
+  {% elif order.status == "printing" %}
+    <span class="status printing">🟡 Printing</span>
+  {% elif order.status == "done" %}
+    <span class="status done">✅ Done</span>
+  {% else %}
+    <span class="status error">🔴 Error</span>
+  {% endif %}
+</td>
 
-    <td>
-      <form method="post" style="display:inline;">
-        {% csrf_token %}
-        <input type="hidden" name="order_id" value="{{ order.id }}">
-        <a href="{% url 'open_print_file' order.id %}">▶</a>
-        <button name="action" value="Pause">⏸</button>
-        <button name="action" value="cancel">❌</button>
-        <button name="action" value="reprint">🔁</button>
-      </form>
-    </td>
+<td>
+
+  <!-- ▶ PLAY → OPEN FILE + UPDATE STATUS -->
+  <a href="{% url 'open_print_file' order.order_id %}" 
+     target="_blank"
+     onclick="startPrint({{ order.id }})"
+     title="Start Printing">
+    ▶
+  </a>
+
+  <!-- ⏸ PAUSE -->
+  <a href="#" onclick="pausePrint({{ order.id }})" title="Pause">
+    ⏸
+  </a>
+
+  <!-- ❌ DELETE -->
+  <a href="{% url 'delete_print' order.id %}" 
+     onclick="return confirm('Delete this order?')"
+     title="Delete">
+    ❌
+  </a>
+
+  <!-- 🖨 PRINT -->
+  <a href="{% url 'open_print_file' order.order_id %}" target="_blank">
+    🖨
+  </a>
+
+</td>
+```
+
   </tr>
   {% endfor %}
 </table>
@@ -93,21 +117,18 @@ body {
 .done { color: #2563eb; }
 .error { color: red; }
 
-button {
-  border: none;
-  background: transparent;
+a {
+  text-decoration: none;
+  font-size: 18px;
+  margin-right: 10px;
   cursor: pointer;
-  font-size: 16px;
-  margin-right: 5px;
-}
-.btn-secondary {
-  background: transparent;
-  color: var(--text);
-  border: 1px solid var(--border);
 }
 
-.btn-secondary:hover {
-  background: var(--border);
+.btn-secondary {
+  background: transparent;
+  border: 1px solid #ccc;
+  padding: 6px 12px;
+  border-radius: 6px;
 }
 
 .back-btn {
@@ -115,8 +136,25 @@ button {
   align-items: center;
   gap: 6px;
 }
-
 </style>
+
+<script>
+function startPrint(id) {
+    fetch(`/start-print/${id}/`)
+    .then(() => {
+        document.getElementById("status-" + id).innerHTML =
+            '<span class="status printing">🟡 Printing</span>';
+    });
+}
+
+function pausePrint(id) {
+    fetch(`/pause-print/${id}/`)
+    .then(() => {
+        document.getElementById("status-" + id).innerHTML =
+            '<span class="status waiting">🟢 Paused</span>';
+    });
+}
+</script>
 
 </body>
 </html>
