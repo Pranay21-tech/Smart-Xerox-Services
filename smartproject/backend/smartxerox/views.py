@@ -534,17 +534,6 @@ def send_to_print_queue(request):
 
     return redirect("printQueue_admin")
 
-@login_required(login_url='admin_login')
-@user_passes_test(lambda u: u.is_staff)
-def printQueue_admin(request):
-
-    orders = PrintOrder.objects.order_by("-id")
-
-    return render(request, "printQueue_admin.html", {
-        "orders": orders
-    })
-
-
 import mimetypes
 
 @login_required(login_url='admin_login')
