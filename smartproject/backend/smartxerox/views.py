@@ -41,19 +41,22 @@ def index(request):
     return render(request, "index.html")
 
 def form_page(request):
-    return render(request, "Form.html")
+    return render(request, "form.html")
+
+def main(request):
+    return render(request, "main.html")
 
 def about(request):
-    return render(request, "About.html")
+    return render(request, "about.html")
 
 def services(request):
-    return render(request, "Our-services.html")
+    return render(request, "our-services.html")
 
 def contact(request):
-    return render(request, "Contact.html")
+    return render(request, "contact.html")
 
 def privacy(request):
-    return render(request, "Privacy-policy.html")
+    return render(request, "privacy-policy.html")
 
 def admin_settings_view(request):
     return render(request, "admin_settings.html")
@@ -65,7 +68,7 @@ def send_to_print_queue(request):
     return render(request, "send_to_print.html")
 
 def Stationery(request):
-    return render(request, "Stationery.html")
+    return render(request, "stationery.html")
 
 def pdf_printing(request):
     return render(request, "pdf_printing.html")
