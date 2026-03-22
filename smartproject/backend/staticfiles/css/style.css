@@ -35,6 +35,7 @@ body {
 }
 
 .logo img {
+  background-image: url("../logo.png");
   max-height: 70px !important;
   width: auto !important;
   object-fit: contain;
