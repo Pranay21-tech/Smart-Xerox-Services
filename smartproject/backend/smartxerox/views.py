@@ -59,7 +59,7 @@ def admin_settings_view(request):
     return render(request, "admin_settings.html")
 
 def printQueue_admin(request):
-    return render(request, "print_queue.html")  # ✅ FIXED
+    return render(request, "print_queue.html")  
 
 def send_to_print_queue(request):
     return render(request, "send_to_print.html")
@@ -74,7 +74,7 @@ def college_documents(request):
     return render(request, "college_documents.html")
 
 def main(request):
-    return render(request, "main.html")  # ✅ FIX MAIN ERROR
+    return render(request, "main.html")
 
 
 # ======================================
