@@ -58,8 +58,8 @@ def privacy(request):
 def admin_settings_view(request):
     return render(request, "admin_settings.html")
 
-def printQueue_admin(request):
-    return render(request, "print_queue.html")  
+# def printQueue_admin(request):
+#     return render(request, "print_queue.html")  
 
 def send_to_print_queue(request):
     return render(request, "send_to_print.html")
