@@ -43,9 +43,6 @@ def index(request):
 def form_page(request):
     return render(request, "form.html")
 
-def main(request):
-    return render(request, "main.html")
-
 def about(request):
     return render(request, "about.html")
 
@@ -62,7 +59,7 @@ def admin_settings_view(request):
     return render(request, "admin_settings.html")
 
 def printQueue_admin(request):
-    return render(request, "print_queue.html")
+    return render(request, "print_queue.html")  # ✅ FIXED
 
 def send_to_print_queue(request):
     return render(request, "send_to_print.html")
@@ -75,6 +72,9 @@ def pdf_printing(request):
 
 def college_documents(request):
     return render(request, "college_documents.html")
+
+def main(request):
+    return render(request, "main.html")  # ✅ FIX MAIN ERROR
 
 
 # ======================================
