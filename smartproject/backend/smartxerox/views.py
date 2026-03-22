@@ -504,7 +504,7 @@ def printQueue_admin(request):
 
     orders = Order.objects.filter(status="Approved").order_by("-id")
 
-    return render(request, "printQueue_admin.html", {
+    return render(request, "print_queue.html", {
         "orders": orders
     })
 
