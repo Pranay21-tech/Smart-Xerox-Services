@@ -74,7 +74,7 @@ smartproject/
 ### 1️⃣ Clone Repository
 
 ```
-git clone https://github.com/YOUR_USERNAME/smart-xerox-services.git
+git clone https://github.com/Pranay21-tech/Smart-Xerox-Services.git
 cd smart-xerox-services
 ```
 
