@@ -57,6 +57,7 @@ MIDDLEWARE = [
     'allauth.account.middleware.AccountMiddleware',
 
     'social_django.middleware.SocialAuthExceptionMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 
@@ -105,8 +106,8 @@ DATABASES = {
 from mongoengine import connect
 
 connect(
-    db="smart_xerox_db",
-    host="mongodb://127.0.0.1:27017/smart_xerox_db"
+    db="smartxeroxservice26",
+    host="mongodb+srv://smartxeroxservice26:smartxeroxservice26@smart-xerox-service.ets6zxt.mongodb.net/"
 )
 
 
@@ -186,6 +187,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # ======================
 # INTERNATIONAL
@@ -207,7 +209,7 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 # ======================

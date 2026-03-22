@@ -22,8 +22,9 @@ urlpatterns = [
     # =========================
     # User Login & Register
     # =========================
-    path('form/', views.signup, name='form'),
-   path("login/", views.user_login, name="login"),
+    path('form/', views.form_page, name='form'),   # HTML page
+    path('signup/', views.signup, name='signup'),  # API
+    path("login/", views.user_login, name="login"),
     path('main/', views.main, name='main'),
 
     # =========================

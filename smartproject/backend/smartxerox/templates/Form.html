@@ -9,6 +9,7 @@
 <link rel="apple-touch-icon" href="{% static 'logo192.png' %}">
     <link rel="manifest" href="{% static 'manifest.json' %}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" 
 integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <title>Smart Xerox Services-SignUp page</title>
@@ -112,36 +113,53 @@ integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+
                         </form>
                     </div>
 <script>
+document.querySelector("#signupForm").addEventListener("submit", async function(e){
+    e.preventDefault();
 
-function togglePassword(id, icon){
+    let p1 = document.getElementById("signPassword").value;
+    let p2 = document.getElementById("signConfirmPassword").value;
 
-    const input = document.getElementById(id);
-
-    if(input.type === "password"){
-        input.type = "text";
-        icon.classList.remove("fa-eye");
-        icon.classList.add("fa-eye-slash");
-    }else{
-        input.type = "password";
-        icon.classList.remove("fa-eye-slash");
-        icon.classList.add("fa-eye");
+    if(p1 !== p2){
+        alert("Passwords do not match");
+        return;
     }
 
-}
+    const formData = new FormData(this);
 
-document.querySelector("#signupForm").onsubmit = function(){
+    const response = await fetch("/signup/", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+        },
+        body: formData
+    });
 
-let p1 = document.getElementById("signPassword").value;
-let p2 = document.getElementById("signConfirmPassword").value;
+    const data = await response.json();
 
-if(p1 !== p2){
-alert("Passwords do not match");
-return false;
-}
+    if(data.status === "exists"){
+        alert("User already exists");
+    }
+    else if(data.status === "weak_password"){
+        alert("Password must be at least 8 characters");
+    }
+    else if(data.status === "success"){
+        window.location.href = "/main/";
+    }
+});
 
-}
+const response = await fetch("/signup/", {
+    method: "POST",
+    headers: {
+        "X-CSRFToken": document.querySelector('meta[name="csrf-token"]').content
+    },
+    body: formData
+});
 
-</script> 
+const text = await response.text();
+console.log("SERVER RESPONSE:", text);
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+</script>
 <script src="{% static 'js/script.js' %}"></script>              
 </body>
 </html>

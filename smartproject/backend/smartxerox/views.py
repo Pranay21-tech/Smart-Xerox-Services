@@ -40,6 +40,9 @@ razorpay_client = razorpay.Client(auth=(
 def index(request):
     return render(request, "index.html")
 
+def form_page(request):
+    return render(request, "Form.html")
+
 def about(request):
     return render(request, "About.html")
 
@@ -95,12 +98,11 @@ def signup(request):
             password=make_password(password)
         )
 
-        request.session.flush()
         request.session["user_email"] = email
 
-        return redirect("main")
+        return JsonResponse({"status": "success"})
 
-    return render(request, "Form.html")
+    return JsonResponse({"status": "invalid"})
 
 def logout_user(request):
     request.session.flush()
@@ -166,6 +168,7 @@ def user_login(request):
         request.session["user_email"] = email
 
         return redirect("main")
+    
 
     return render(request, "index.html")
 
@@ -819,7 +822,7 @@ def update_order_status(request, id):
     return redirect("profile")
 
 from django.http import HttpResponse
-from reportlab.pdfgen import canvas
+from reportlab.pdfgen import canvas 
 from io import BytesIO
 
 @login_required
