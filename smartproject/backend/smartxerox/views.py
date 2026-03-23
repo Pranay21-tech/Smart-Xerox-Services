@@ -360,63 +360,81 @@ def create_razorpay_order(request):
 # ======================================
 from django.utils import timezone
 
+from django.contrib.auth.models import User
+from django.utils import timezone
+
 def payment_success(request):
 
-    if "user_email" not in request.session:
-        return redirect("index")
-
-    order_id = request.GET.get("order_id")
-    payment_id = request.GET.get("payment_id")
-
-    if not order_id:
-        return redirect("main")
-
-    order = Order.objects(order_id=order_id).first()
-
-    if not order:
-        return redirect("main")
-
-    # Update payment
-    order.payment_status = "Paid"
-
-    if not order.pickup_code:
-        order.pickup_code = str(random.randint(1000, 9999))
-
-    order.save()
-
-    file_name = os.path.basename(order.file_path) if order.file_path else "No File"
-
-    relative_file = None
-    if order.file_path:
-        relative_file = "uploads/" + file_name
-
-    # ⚠️ IMPORTANT CHANGE HERE
-    django_user = User.objects.filter(email=request.session.get("user_email")).first()
-    
-    UploadDocument.objects.create(
-    user=django_user,
-    file=relative_file,
-    file_name=file_name,
-    pages=order.pages,
-    copies=order.copies,
-    print_type=order.print_type,
-    status="pending",
-    payment_status="paid",
-    created_at=timezone.now()
-)
-    Payment.objects.create(
-    user=django_user,
-    order_id=order.order_id,
-    file_name=file_name,
-    pages=order.pages,
-    amount=order.total_price,
-    status="Paid"
-)
-
     try:
-        send_mail(
-            subject="Smart Xerox Services - Payment Successful",
-            message=f"""
+        # ✅ Session check
+        if "user_email" not in request.session:
+            return redirect("index")
+
+        order_id = request.GET.get("order_id")
+        payment_id = request.GET.get("payment_id")
+
+        if not order_id:
+            return redirect("main")
+
+        order = Order.objects(order_id=order_id).first()
+
+        if not order:
+            return redirect("main")
+
+        # ✅ Update payment
+        order.payment_status = "Paid"
+
+        if not order.pickup_code:
+            order.pickup_code = str(random.randint(1000, 9999))
+
+        order.save()
+
+        # ✅ File handling
+        file_name = os.path.basename(order.file_path) if order.file_path else "No File"
+
+        relative_file = None
+        if order.file_path:
+            relative_file = "uploads/" + file_name
+
+        # ✅ Get Django user safely
+        django_user = User.objects.filter(
+            email=request.session.get("user_email")
+        ).first()
+
+        # ✅ SAVE ORDER HISTORY (SAFE)
+        try:
+            UploadDocument.objects.create(
+                user=django_user,
+                file=relative_file,
+                file_name=file_name,
+                pages=order.pages or 1,
+                copies=order.copies or 1,
+                print_type=order.print_type,
+                status="pending",
+                payment_status="paid",
+                created_at=timezone.now()
+            )
+        except Exception as e:
+            print("UploadDocument error:", e)
+
+        # ✅ SAVE PAYMENT HISTORY (SAFE)
+        try:
+            Payment.objects.create(
+                user=django_user,
+                order_id=order.order_id,
+                file_name=file_name,
+                pages=order.pages or 1,
+                amount=order.total_price or 0,
+                status="Paid"
+            )
+        except Exception as e:
+            print("Payment save error:", e)
+
+        # ✅ Email (safe)
+        try:
+            send_mail(
+                subject="Smart Xerox Services - Payment Successful",
+                message=f"""
 Smart Xerox Services
 
 Payment Confirmed ✅
@@ -424,14 +442,15 @@ Payment Confirmed ✅
 Order ID: {order.order_id}
 Pickup Code: {order.pickup_code}
 """,
-            from_email=settings.EMAIL_HOST_USER,
-            recipient_list=[order.user_email],
-            fail_silently=False,
-        )
-    except Exception as e:
-        print("Email error:", e)
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[order.user_email],
+                fail_silently=True,
+            )
+        except Exception as e:
+            print("Email error:", e)
 
-    message = f"""
+        # ✅ WhatsApp
+        message = f"""
 🖨️ SMART XEROX SERVICES
 ━━━━━━━━━━━━━━━
 💳 PAYMENT CONFIRMED
@@ -441,14 +460,18 @@ Pickup Code: {order.pickup_code}
 🔐 Pickup Code : {order.pickup_code}
 """
 
-    whatsapp_url = f"https://wa.me/?text={urllib.parse.quote(message)}"
+        whatsapp_url = f"https://wa.me/?text={urllib.parse.quote(message)}"
 
-    return render(request, "payment_success.html", {
-        "order_id": order.order_id,
-        "payment_id": payment_id,
-        "pickup_code": order.pickup_code,
-        "whatsapp_url": whatsapp_url
-    })
+        return render(request, "payment_success.html", {
+            "order_id": order.order_id,
+            "payment_id": payment_id,
+            "pickup_code": order.pickup_code,
+            "whatsapp_url": whatsapp_url
+        })
+
+    except Exception as e:
+        # 🔥 THIS WILL PREVENT 502
+        return HttpResponse(f"Error in payment_success: {str(e)}")
 # ======================================
 # Payment page
 # ======================================
