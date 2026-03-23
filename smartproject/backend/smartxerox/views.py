@@ -359,7 +359,6 @@ def create_razorpay_order(request):
 # ======================================
 from django.utils import timezone
 
-@login_required
 def payment_success(request):
 
     if "user_email" not in request.session:
@@ -384,18 +383,15 @@ def payment_success(request):
 
     order.save()
 
-    # File name
     file_name = os.path.basename(order.file_path) if order.file_path else "No File"
 
     relative_file = None
     if order.file_path:
         relative_file = "uploads/" + file_name
 
-    # -----------------------------
-    # SAVE ORDER HISTORY
-    # -----------------------------
+    # ⚠️ IMPORTANT CHANGE HERE
     UploadDocument.objects.create(
-        user=request.user,
+        user=None,   # ✅ FIX (no request.user)
         file=relative_file,
         file_name=file_name,
         pages=order.pages,
@@ -406,11 +402,8 @@ def payment_success(request):
         created_at=timezone.now()
     )
 
-    # -----------------------------
-    # ✅ SAVE PAYMENT HISTORY (FIX)
-    # -----------------------------
     Payment.objects.create(
-        user=request.user,
+        user=None,   # ✅ FIX
         order_id=order.order_id,
         file_name=file_name,
         pages=order.pages,
@@ -418,7 +411,6 @@ def payment_success(request):
         status="Paid"
     )
 
-    # Email
     try:
         send_mail(
             subject="Smart Xerox Services - Payment Successful",
@@ -437,7 +429,6 @@ Pickup Code: {order.pickup_code}
     except Exception as e:
         print("Email error:", e)
 
-    # WhatsApp
     message = f"""
 🖨️ SMART XEROX SERVICES
 ━━━━━━━━━━━━━━━
@@ -456,7 +447,9 @@ Pickup Code: {order.pickup_code}
         "pickup_code": order.pickup_code,
         "whatsapp_url": whatsapp_url
     })
-
+# ======================================
+# Payment page
+# ======================================
 def payment_page(request):
 
     amount = request.GET.get("amount", "0")
@@ -695,7 +688,7 @@ def profile(request):
     if request.method == "POST":
 
         uploaded_file = request.FILES.get("file")
-        pages = request.POST.get("pages")
+        pages = int(request.POST.get("pages", 0))
         copies = request.POST.get("copies")
         print_type = request.POST.get("print_type")
 
