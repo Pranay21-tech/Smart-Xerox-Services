@@ -390,26 +390,27 @@ def payment_success(request):
         relative_file = "uploads/" + file_name
 
     # ⚠️ IMPORTANT CHANGE HERE
+    django_user = User.objects.filter(email=request.session.get("user_email")).first()
+    
     UploadDocument.objects.create(
-        user=None,   # ✅ FIX (no request.user)
-        file=relative_file,
-        file_name=file_name,
-        pages=order.pages,
-        copies=order.copies,
-        print_type=order.print_type,
-        status="pending",
-        payment_status="paid",
-        created_at=timezone.now()
-    )
-
+    user=django_user,
+    file=relative_file,
+    file_name=file_name,
+    pages=order.pages,
+    copies=order.copies,
+    print_type=order.print_type,
+    status="pending",
+    payment_status="paid",
+    created_at=timezone.now()
+)
     Payment.objects.create(
-        user=None,   # ✅ FIX
-        order_id=order.order_id,
-        file_name=file_name,
-        pages=order.pages,
-        amount=order.total_price,
-        status="Paid"
-    )
+    user=django_user,
+    order_id=order.order_id,
+    file_name=file_name,
+    pages=order.pages,
+    amount=order.total_price,
+    status="Paid"
+)
 
     try:
         send_mail(
