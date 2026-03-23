@@ -241,30 +241,28 @@ def create_order(request):
     file_name = data.get("fileName")
     file_path = None
 
-    pdf_pages = 1
+    pdf_pages = 1   # ✅ default safe value
 
     # =========================
     # SAVE FILE
     # =========================
     if file_data and file_name:
-
-        header, encoded = file_data.split(",", 1)
-        file_bytes = base64.b64decode(encoded)
-
-        upload_dir = os.path.join(settings.MEDIA_ROOT, "uploads")
-        os.makedirs(upload_dir, exist_ok=True)
-
-        safe_name = f"{uuid.uuid4().hex}_{file_name}"
-        file_path = os.path.join(upload_dir, safe_name)
-
-        with open(file_path, "wb") as f:
-            f.write(file_bytes)
-
-        # =========================
-        # DOCUMENT PAGE DETECTION
-        # =========================
         try:
+            header, encoded = file_data.split(",", 1)
+            file_bytes = base64.b64decode(encoded)
 
+            upload_dir = os.path.join(settings.MEDIA_ROOT, "uploads")
+            os.makedirs(upload_dir, exist_ok=True)
+
+            safe_name = f"{uuid.uuid4().hex}_{file_name}"
+            file_path = os.path.join(upload_dir, safe_name)
+
+            with open(file_path, "wb") as f:
+                f.write(file_bytes)
+
+            # =========================
+            # DOCUMENT PAGE DETECTION
+            # =========================
             ext = file_name.split(".")[-1].lower()
 
             if ext == "pdf":
@@ -273,7 +271,7 @@ def create_order(request):
 
             elif ext in ["doc", "docx"]:
                 doc = Document(file_path)
-                pdf_pages = len(doc.paragraphs) // 40 + 1
+                pdf_pages = max(len(doc.paragraphs) // 40, 1)
 
             elif ext in ["ppt", "pptx"]:
                 prs = Presentation(file_path)
@@ -281,17 +279,14 @@ def create_order(request):
 
             elif ext in ["jpg", "jpeg", "png"]:
                 pdf_pages = 1
-            
-             # 🔥 Important fix
-            if pages <= 0:
-                pages = 1
 
         except Exception as e:
             print("Document page detection error:", e)
+            pdf_pages = 1   # ✅ fallback safe value
 
-# =========================
-# TOTAL PAGE CALCULATION
-# =========================
+    # =========================
+    # TOTAL PAGE CALCULATION
+    # =========================
     pdf_pages = max(pdf_pages, 1)
     manual_pages = max(manual_pages, 0)
     total_pages = pdf_pages + manual_pages
@@ -366,6 +361,9 @@ from django.utils import timezone
 
 @login_required
 def payment_success(request):
+
+    if "user_email" not in request.session:
+        return redirect("index")
 
     order_id = request.GET.get("order_id")
     payment_id = request.GET.get("payment_id")
