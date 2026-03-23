@@ -906,9 +906,9 @@ def college_documents(request):
 
 from PyPDF2 import PdfReader
 
-def get_pdf_pages(file):
+def get_pdf_pages_fast(file):
     try:
-        reader = PdfReader(file)
+        reader = PdfReader(file, strict=False)
         return len(reader.pages)
-    except:
-        return 0
+    except Exception:
+        return 1
