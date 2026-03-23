@@ -123,7 +123,7 @@ SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 # ======================
 
 AUTHENTICATION_BACKENDS = (
-    'social_core.backends.google.GoogleOAuth2',
+     'social_core.backends.google.GoogleOAuth2',
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -254,3 +254,12 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'smartxeroxservice26@gmail.com'
 EMAIL_HOST_PASSWORD = 'tllpuaylasqrdyws'
+
+# SECURITY (VERY IMPORTANT FOR RENDER)
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+SESSION_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SAMESITE = 'None'
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
