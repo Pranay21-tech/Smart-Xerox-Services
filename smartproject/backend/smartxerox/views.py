@@ -22,6 +22,7 @@ from pptx import Presentation
 from .models import UploadDocument
 from .models import Customer, Order, AdminSettings, PrintOrder
 from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.models import User 
 
 
 
