@@ -118,6 +118,9 @@ connect(
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 
 
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024  # 5MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024  # 5MB
 # ======================
 # AUTHENTICATION
 # ======================

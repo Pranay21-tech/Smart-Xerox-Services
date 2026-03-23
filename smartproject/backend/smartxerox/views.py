@@ -903,3 +903,12 @@ def college_documents(request):
         return redirect("index")
 
     return render(request, "college_documents.html")
+
+from PyPDF2 import PdfReader
+
+def get_pdf_pages(file):
+    try:
+        reader = PdfReader(file)
+        return len(reader.pages)
+    except:
+        return 0
